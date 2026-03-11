@@ -1,0 +1,65 @@
+<div class="mt-6">
+
+      <div class="flex justify-between items-center mb-8">
+        <div>
+          <h1 class="text-2xl font-bold text-slate-800">Partes de Trabajo (Albaranes)</h1>
+          <p class="text-slate-500 text-sm">Registro de actuaciones de los técnicos</p>
+        </div>
+        <button class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded shadow transition-colors">
+          + Crear Albarán Manual
+        </button>
+      </div>
+
+      @if (avisoSeleccionado()) {
+        <div class="mb-6 bg-indigo-50 border-l-4 border-indigo-500 p-4 rounded-r-lg flex justify-between items-center">
+          <div>
+            <h3 class="text-indigo-800 font-bold">Creando albarán vinculado</h3>
+            <p class="text-indigo-600 text-sm">Estás a punto de crear un parte de trabajo para el Aviso #{{ avisoSeleccionado() }}</p>
+          </div>
+          <button class="bg-indigo-600 text-white px-4 py-2 rounded shadow text-sm font-bold">
+            Abrir Formulario
+          </button>
+        </div>
+      }
+
+      <div class="flex flex-col gap-4">
+        @for (albaran of albaranesService.albaranes(); track albaran.id_parte_trabajo) {
+           <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-4 flex flex-col md:flex-row md:items-center gap-4 hover:shadow-md transition-shadow">
+
+            <div class="flex flex-col items-start md:w-48 flex-shrink-0">
+              <span class="text-sm font-bold text-slate-500">ALB-#{{ albaran.id_parte_trabajo }}</span>
+              <span class="text-xs font-bold px-2 py-1 mt-1 rounded-md uppercase tracking-wide"
+                    [class.bg-green-100]="albaran.estado === 'Cerrado'"
+                    [class.text-green-700]="albaran.estado === 'Cerrado'"
+                    [class.bg-blue-100]="albaran.estado === 'En curso'"
+                    [class.text-blue-700]="albaran.estado === 'En curso'"
+                    [class.bg-slate-100]="albaran.estado === 'Abierto'"
+                    [class.text-slate-700]="albaran.estado === 'Abierto'">
+                {{ albaran.estado }}
+              </span>
+            </div>
+
+            <div class="flex-grow">
+              <p class="text-slate-800 font-medium line-clamp-2">{{ albaran.descripcion }}</p>
+              <div class="text-xs text-slate-500 mt-2 flex gap-3">
+                <span>📅 Inicio: {{ albaran.fecha_inicio | date:'dd/MM/yyyy HH:mm' }}</span>
+                @if (albaran.id_tarea) {
+                  <span class="bg-slate-100 px-2 rounded text-slate-600">Viene del Aviso #{{ albaran.id_tarea }}</span>
+                }
+              </div>
+            </div>
+
+            <div class="flex flex-shrink-0 gap-2 mt-3 md:mt-0">
+              <button class="bg-slate-100 hover:bg-slate-200 text-slate-700 py-1 px-3 rounded text-sm font-semibold transition-colors">
+                Ver / Editar
+              </button>
+            </div>
+          </div>
+        } @empty {
+          <div class="text-center py-12 bg-white rounded-lg border-2 border-dashed border-slate-200">
+            <p class="text-slate-500 font-medium text-lg">No hay partes de trabajo registrados.</p>
+          </div>
+        }
+      </div>
+
+    </div>

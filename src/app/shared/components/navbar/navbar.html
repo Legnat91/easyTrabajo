@@ -1,0 +1,46 @@
+<nav class="bg-green-900 text-white shadow-md">
+      <div class="container mx-auto px-4">
+        <div class="flex items-center justify-between h-16">
+
+          <div class="flex-shrink-0 font-bold text-xl tracking-wider cursor-pointer" routerLink="/avisos">
+            Easy<span class="text-lime-400">Parte</span>
+          </div>
+
+          <div class="hidden md:block">
+            <div class="ml-10 flex items-baseline space-x-4">
+
+              <a
+                routerLink="/avisos"
+                routerLinkActive="bg-slate-900 text-lime-400 font-semibold border-b-2 border-lime-400"
+                [routerLinkActiveOptions]="{ exact: true }"
+                class="px-3 py-2 rounded-t-md text-sm font-medium hover:bg-slate-700 hover:text-white transition-colors cursor-pointer">
+                Avisos
+              </a>
+
+              <a
+                routerLink="/albaranes"
+                routerLinkActive="bg-slate-900 text-lime-400 font-semibold border-b-2 border-lime-400"
+                class="px-3 py-2 rounded-t-md text-sm font-medium hover:bg-slate-700 hover:text-white transition-colors cursor-pointer">
+                Albaranes
+              </a>
+
+              <a
+                routerLink="/clientes"
+                routerLinkActive="bg-slate-900 text-lime-400 font-semibold border-b-2 border-lime-400"
+                class="px-3 py-2 rounded-t-md text-sm font-medium hover:bg-slate-700 hover:text-white transition-colors cursor-pointer">
+                Clientes
+              </a>
+
+            </div>
+          </div>
+
+          <div class="flex items-center">
+            <div class="flex items-center gap-2 bg-slate-700 px-3 py-1 rounded-full text-sm">
+              <span class="w-2 h-2 rounded-full bg-green-400"></span>
+              {{ currentUser() }}
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </nav>
