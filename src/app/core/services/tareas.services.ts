@@ -116,5 +116,17 @@ export class TareasService {
     );
   }
 
+  //Cancelar Tarea
+  cancelarTarea(idTarea: number) {
+    this.tareas.update(tareasActuales =>
+      tareasActuales.map(tarea =>
+        tarea.id_tarea === idTarea
+          ? { ...tarea, estado: 'Cancelada', fecha_fin: new Date() }
+          : tarea
+      )
+    );
+  }
+
+
 }
 

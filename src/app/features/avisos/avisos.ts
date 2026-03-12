@@ -49,4 +49,11 @@ export default class Avisos {
     // Llamamos a la función con el nombre corregido
     this.toggleFormulario();
   }
+
+cancelarAviso(idTarea: number) {
+    // Aquí también podríamos poner un modal en el futuro, pero por ahora lo cancelamos directo
+    this.tareasService.cancelarTarea(idTarea);
+  }
+
+
 }

@@ -98,11 +98,13 @@
         </div>
 
         <div class="flex gap-2 mt-auto pt-2">
+
           <button class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 py-2 rounded text-sm font-semibold transition-colors">
             Detalles
           </button>
 
           @if (tarea.estado !== 'Finalizada' && tarea.estado !== 'Cancelada') {
+
             @if (!tarea.id_empleado) {
               <button (click)="cogerAviso(tarea.id_tarea!)"
                 class="flex-1 bg-blue-50 text-blue-600 hover:bg-blue-100 py-2 rounded text-sm font-semibold transition-colors">
@@ -115,6 +117,11 @@
                 📝 Hacer Albarán
               </button>
             }
+
+            <button (click)="cancelarAviso(tarea.id_tarea!)"
+              class="bg-red-50 text-red-600 hover:bg-red-100 py-2 px-3 rounded text-sm font-semibold transition-colors border border-red-100">
+              ❌
+            </button>
           }
         </div>
       </div>

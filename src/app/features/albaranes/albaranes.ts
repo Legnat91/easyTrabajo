@@ -1,26 +1,26 @@
-import { AlbaranesService } from '../../core/services/albaranes.services';
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
-import { ActivatedRoute } from '@angular/router'
+import { ActivatedRoute } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AlbaranesService } from '../../core/services/albaranes.services'; // Asegúrate de que no termine en .services si lo cambiaste
 import { TareasService } from '../../core/services/tareas.services';
 
 @Component({
   selector: 'app-albaranes',
-  imports: [DatePipe,ReactiveFormsModule],
+  imports: [DatePipe, ReactiveFormsModule],
   templateUrl: './albaranes.html',
 })
 export default class Albaranes implements OnInit {
   public albaranesService = inject(AlbaranesService);
-  public tareasService=inject(TareasService);
-  private route = inject(ActivatedRoute); //  Inyectamos la ruta activa
+  public tareasService = inject(TareasService);
+  private route = inject(ActivatedRoute);
   private fb = inject(FormBuilder);
 
-  // Creamos una señal para guardar el ID del aviso si venimos de allí
   public avisoSeleccionado = signal<number | null>(null);
   public mostrarFormulario = signal(false);
+  public mostrarModalCierre = signal(false);
+  public albaranParaCerrar = signal<{ idParte: number, idTarea?: number } | null>(null);
 
-  //Creamos el molde de Albarán
   public albaranForm = this.fb.group({
     descripcion: ['', [Validators.required, Validators.minLength(10)]],
     id_cliente: [null, [Validators.required]],
@@ -28,55 +28,60 @@ export default class Albaranes implements OnInit {
     id_empleado: [5]
   });
 
-  // El ngOnInit se ejecuta automáticamente cuando carga la pantalla
   ngOnInit() {
-    // Nos suscribimos a los parámetros de la URL
     this.route.queryParams.subscribe(params => {
-      // Si en la URL existe "aviso_id"
       if (params['aviso_id']) {
         const idAviso = Number(params['aviso_id']);
-        // Actualizamos nuestra señal
         this.avisoSeleccionado.set(idAviso);
-        //Rellenamos el formulario automaticamente con el ID de aviso
+
         this.albaranForm.patchValue({
           id_tarea: idAviso
         });
-        //Abrimos el formulario automaticamente
+
+        // Esto es lo que hace que el formulario se abra automáticamente
         this.mostrarFormulario.set(true);
       }
     });
   }
 
-    toggleFormulario(){
-      this.mostrarFormulario.update(v=>!v);
-      if(!this.mostrarFormulario()){
-        //Si se cierra el form, se limpia pero mantiene al empleado
-        this.albaranForm.reset({id_empleado:5});
+  toggleFormulario() {
+    this.mostrarFormulario.update(v => !v);
+    if (!this.mostrarFormulario()) {
+      this.albaranForm.reset({ id_empleado: 5 });
+    }
+  }
+
+  guardarAlbaran() {
+    if (this.albaranForm.invalid) {
+      console.warn('Formulario inválido', this.albaranForm.value);
+      return;
+    }
+
+    this.albaranesService.agregarAlbaran(this.albaranForm.value);
+
+    this.avisoSeleccionado.set(null);
+    this.toggleFormulario();
+  }
+
+  // --- Lógica del Modal de Cierre ---
+  abrirModalCierre(idParte: number, idTarea?: number) {
+    this.albaranParaCerrar.set({ idParte, idTarea });
+    this.mostrarModalCierre.set(true);
+  }
+
+  cancelarCierre() {
+    this.mostrarModalCierre.set(false);
+    this.albaranParaCerrar.set(null);
+  }
+
+  confirmarCierre() {
+    const datos = this.albaranParaCerrar();
+    if (datos) {
+      this.albaranesService.cerrarAlbaran(datos.idParte);
+      if (datos.idTarea) {
+        this.tareasService.finalizarTarea(datos.idTarea);
       }
     }
-
-    guardarAlbaran(){
-      if (this.albaranForm.invalid)return;
-      this.albaranesService.agregarAlbaram(this.albaranForm.value);
-
-      //Limpiamos la url y el aviso seleccionado despues de guardar
-      this.avisoSeleccionado.set(null);
-      this.toggleFormulario();
-    }
-    //Cerrar Partes
-    cerrarParte(idParte:number, idTarea?:number){
-      //Confirmacion del cierre
-      if(confirm('¿Estás seguro de que quieres cerrar este parte de trabajo?')){
-        //Cerramos
-        this.albaranesService.cerrarAlbaran(idParte);
-
-        //Si esta enlazado a un aviso se cierra automaticamente
-        if(idTarea){
-          this.tareasService.finalizarTarea(idTarea);
-          console.log(`Aviso #${idTarea} finalizado automáticamente.`);
-        }
-
-      }
-    }
-
+    this.cancelarCierre();
+  }
 }

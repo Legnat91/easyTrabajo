@@ -17,7 +17,7 @@ export class AlbaranesService {
     },
 
   ]);
-  agregarAlbaram(nuevoAlbaran: any) {
+  agregarAlbaran(nuevoAlbaran: any) {
     this.albaranes.update(albarenesActuales=>{
       const maxId=albarenesActuales.length>0?Math.max(...albarenesActuales.map(a=>a.id_parte_trabajo||0)):1000;
 
@@ -25,7 +25,7 @@ export class AlbaranesService {
         ...nuevoAlbaran,
         id_parte_trabajo:maxId+1,
         fecha_inicio:new Date(),
-        estad:'Abierto'//estado base
+        estado:'Abierto'//estado base
       };
       return[albaranesCompleto,...albarenesActuales];
     })
