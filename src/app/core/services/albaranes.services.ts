@@ -30,4 +30,15 @@ export class AlbaranesService {
       return[albaranesCompleto,...albarenesActuales];
     })
   }
+  //Albaranes Cerrado
+  cerrarAlbaran(idParte:number){
+    this.albaranes.update(albaranesActuales=>
+      albaranesActuales.map(albaran=>
+        albaran.id_parte_trabajo===idParte ?
+        {...albaran, estado:'Cerrado',fecha_fin:new Date()}
+        :albaran
+      )
+    );
+  }
+
 }

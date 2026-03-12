@@ -88,8 +88,6 @@ export class TareasService {
       */
   }
 
-
-
   // Método para crear una nueva tarea
   agregarTarea(nuevaTarea: any) { // Usamos 'any' momentáneamente o tipamos parcialmente
     this.tareas.update(tareasActuales => {
@@ -107,5 +105,16 @@ export class TareasService {
       return [tareaCompleta, ...tareasActuales];
     });
   }
+// Cambia el estado de una tarea a 'Finalizada'
+  finalizarTarea(idTarea: number) {
+    this.tareas.update(tareasActuales =>
+      tareasActuales.map(tarea => tarea.id_tarea === idTarea ? {
+        ...tarea, estado: 'Finalizada', fecha_fin: new Date()
+      }
+        : tarea
+      )
+    );
+  }
+
 }
 

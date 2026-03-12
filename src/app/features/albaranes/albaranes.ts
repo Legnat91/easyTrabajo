@@ -3,6 +3,7 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { ActivatedRoute } from '@angular/router'
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { TareasService } from '../../core/services/tareas.services';
 
 @Component({
   selector: 'app-albaranes',
@@ -11,6 +12,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 })
 export default class Albaranes implements OnInit {
   public albaranesService = inject(AlbaranesService);
+  public tareasService=inject(TareasService);
   private route = inject(ActivatedRoute); //  Inyectamos la ruta activa
   private fb = inject(FormBuilder);
 
@@ -61,4 +63,20 @@ export default class Albaranes implements OnInit {
       this.avisoSeleccionado.set(null);
       this.toggleFormulario();
     }
+    //Cerrar Partes
+    cerrarParte(idParte:number, idTarea?:number){
+      //Confirmacion del cierre
+      if(confirm('¿Estás seguro de que quieres cerrar este parte de trabajo?')){
+        //Cerramos
+        this.albaranesService.cerrarAlbaran(idParte);
+
+        //Si esta enlazado a un aviso se cierra automaticamente
+        if(idTarea){
+          this.tareasService.finalizarTarea(idTarea);
+          console.log(`Aviso #${idTarea} finalizado automáticamente.`);
+        }
+
+      }
+    }
+
 }
