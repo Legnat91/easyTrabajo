@@ -1,11 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { ClientesService } from '../../core/services/clientes.services';
 
 @Component({
   selector: 'app-clientes',
   imports: [],
   templateUrl: './clientes.html',
-  styleUrl: './clientes.css',
 })
 export class Clientes {
-
+  public clientesService=inject(ClientesService);
 }
