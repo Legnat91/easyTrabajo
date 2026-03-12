@@ -30,13 +30,15 @@ export class ClientesService {
     }
   ]);
 
-  agregarCliente(nuevoCliente:Cliente){
-    this.clientes.update(actuales=>{
-      const maxId=actuales.length>0?Math.max(...actuales.map(c=>c.id_cliente||0)):0;
-      return[{...nuevoCliente,id_cliente:maxId+1}];
+  agregarCliente(nuevoCliente: Cliente) {
+    this.clientes.update(actuales => {
+
+      const maxId = actuales.length > 0 ? Math.max(...actuales.map(c => c.id_cliente || 0)) : 0;
+
+
+      return [{ ...nuevoCliente, id_cliente: maxId + 1 }, ...actuales];
     });
   }
-
 
 }
 

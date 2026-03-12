@@ -2,8 +2,8 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { AlbaranesService } from '../../core/services/albaranes.services'; // Asegúrate de que no termine en .services si lo cambiaste
-import { TareasService } from '../../core/services/tareas.services';
+import { AlbaranesService } from '../../core/services/albaranes.service'; // Asegúrate de que no termine en .services si lo cambiaste
+import { TareasService } from '../../core/services/tareas.service';
 
 @Component({
   selector: 'app-albaranes',

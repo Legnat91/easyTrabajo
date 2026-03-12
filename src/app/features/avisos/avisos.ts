@@ -2,7 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { TareasService } from '../../core/services/tareas.services'; // Revisa que este archivo exista con la 's' final
+import { TareasService } from '../../core/services/tareas.service'; // Revisa que este archivo exista con la 's' final
 
 @Component({
   selector: 'app-avisos',

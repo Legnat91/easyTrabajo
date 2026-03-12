@@ -23,7 +23,7 @@ export const routes: Routes = [
         title: 'Clientes - EasyParte',
         // Si clientes.component.ts sigue usando "export class ClientesComponent" (sin default),
         // lo dejamos con el .then por ahora hasta que lo refactoricemos.
-        loadComponent: () => import('./features/clientes/clientes').then(m => m.Clientes)
+        loadComponent: () => import('./features/clientes/clientes')
       },
       {
         path: '',
