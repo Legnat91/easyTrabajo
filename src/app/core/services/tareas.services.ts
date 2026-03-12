@@ -100,7 +100,7 @@ export class TareasService {
         ...nuevaTarea,
         id_tarea: maxId + 1,
         fecha_alta: new Date(), // La fecha de creación es ahora
-        estado: 'Pendiente'     // Por defecto nace pendiente
+        estado: nuevaTarea.id_empleado ? 'En proceso' : 'Pendiente'     // Por defecto nace pendiente
       };
 
       // Devolvemos el array actual + la nueva tarea al principio

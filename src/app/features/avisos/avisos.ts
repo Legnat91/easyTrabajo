@@ -20,7 +20,8 @@ export default class Avisos {
     descripcion: ['', [Validators.required, Validators.minLength(5)]],
     importancia: ['Normal', [Validators.required]],
     persona_contacto: [''],
-    telefono_contacto: [''], // Añadido para que no dé error con el HTML
+    telefono_contacto: [''],
+    id_empleado: [null],
     id_empresa: [1, [Validators.required]]
   });
 
