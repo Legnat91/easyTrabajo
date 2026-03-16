@@ -1,6 +1,10 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+
 import { ClientesService } from '../../core/services/clientes.service';
+
+
 
 @Component({
   selector: 'app-clientes',
@@ -10,6 +14,7 @@ import { ClientesService } from '../../core/services/clientes.service';
 export default class Clientes {
   public clientesService = inject(ClientesService);
   private fb = inject(FormBuilder);
+  private router=inject(Router);
 
   // Señal para controlar si se ve la cajita del formulario
   public mostrarFormulario = signal(false);
@@ -45,5 +50,12 @@ export default class Clientes {
 
     // Cerramos el panel
     this.toggleFormulario();
+  }
+  irACrearAviso(idCliente: number) {
+    this.router.navigate(['/avisos'], { queryParams: { cliente_id: idCliente } });
+  }
+
+  irACrearAlbaran(idCliente: number) {
+    this.router.navigate(['/albaranes'], { queryParams: { cliente_id: idCliente } });
   }
 }

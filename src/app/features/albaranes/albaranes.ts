@@ -2,17 +2,22 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { AlbaranesService } from '../../core/services/albaranes.service'; // Asegúrate de que no termine en .services si lo cambiaste
+
+import { AlbaranesService } from '../../core/services/albaranes.service';
 import { TareasService } from '../../core/services/tareas.service';
+import { ClientesService } from '../../core/services/clientes.service';
 
 @Component({
   selector: 'app-albaranes',
   imports: [DatePipe, ReactiveFormsModule],
   templateUrl: './albaranes.html',
 })
+
 export default class Albaranes implements OnInit {
   public albaranesService = inject(AlbaranesService);
   public tareasService = inject(TareasService);
+  public clientesService=inject(ClientesService);
+
   private route = inject(ActivatedRoute);
   private fb = inject(FormBuilder);
 
@@ -23,22 +28,37 @@ export default class Albaranes implements OnInit {
 
   public albaranForm = this.fb.group({
     descripcion: ['', [Validators.required, Validators.minLength(10)]],
-    id_cliente: [null, [Validators.required]],
+    id_cliente: [null as number | null, [Validators.required]],
     id_tarea: [null as number | null],
     id_empleado: [5]
   });
 
-  ngOnInit() {
+ ngOnInit() {
     this.route.queryParams.subscribe(params => {
+
+      // CASO A: Venimos desde la tarjeta de un AVISO
       if (params['aviso_id']) {
         const idAviso = Number(params['aviso_id']);
         this.avisoSeleccionado.set(idAviso);
 
+        const avisoOriginal = this.tareasService.tareas().find(t => t.id_tarea === idAviso);
+        const clienteDelAviso = avisoOriginal ? avisoOriginal.id_cliente : null;
+
         this.albaranForm.patchValue({
-          id_tarea: idAviso
+          id_tarea: idAviso,
+          id_cliente: clienteDelAviso as number | null
         });
 
-        // Esto es lo que hace que el formulario se abra automáticamente
+        this.mostrarFormulario.set(true);
+      }
+      // CASO B: Venimos directamente desde la tabla de CLIENTES (NUEVO)
+      else if (params['cliente_id']) {
+        const idCliente = Number(params['cliente_id']);
+
+        this.albaranForm.patchValue({
+          id_cliente: idCliente
+        });
+
         this.mostrarFormulario.set(true);
       }
     });
