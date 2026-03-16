@@ -38,7 +38,7 @@ Asegúrate de tener instalado en tu sistema:
 ### 2. Clonar el repositorio
 Abre tu terminal y clona este repositorio en tu equipo:
 
-git clone [https://github.com/TU_USUARIO/easy-parte.git](https://github.com/TU_USUARIO/easy-parte.git)
+git clone [https://github.com/Legnat91/easyTrabajo.git](https://github.com/Legnat91/easyTrabajo.git)
 
 (Nota: Cambia TU_USUARIO por tu nombre de usuario de GitHub o la URL real de tu repositorio).
 
