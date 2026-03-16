@@ -40,7 +40,6 @@ Abre tu terminal y clona este repositorio en tu equipo:
 
 git clone [https://github.com/Legnat91/easyTrabajo.git](https://github.com/Legnat91/easyTrabajo.git)
 
-(Nota: Cambia TU_USUARIO por tu nombre de usuario de GitHub o la URL real de tu repositorio).
 
 ### 3. Instalar dependencias
 Navega a la carpeta del proyecto e instala todos los paquetes necesarios (incluyendo Tailwind):
