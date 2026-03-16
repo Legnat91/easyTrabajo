@@ -45,6 +45,7 @@ git clone [https://github.com/Legnat91/easyTrabajo.git](https://github.com/Legna
 Navega a la carpeta del proyecto e instala todos los paquetes necesarios (incluyendo Tailwind):
 
   cd easy-parte
+  
   npm install
 
 ### 4. Levantar el servidor de desarrollo
