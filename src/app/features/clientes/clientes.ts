@@ -4,7 +4,7 @@ import { ClientesService } from '../../core/services/clientes.service';
 
 @Component({
   selector: 'app-clientes',
-  imports: [ReactiveFormsModule], // <-- 1. ¡Crucial importar esto!
+  imports: [ReactiveFormsModule],
   templateUrl: './clientes.html',
 })
 export default class Clientes {
@@ -14,7 +14,7 @@ export default class Clientes {
   // Señal para controlar si se ve la cajita del formulario
   public mostrarFormulario = signal(false);
 
-  // 2. El "Molde" del formulario de cliente
+  // El Molde del formulario de cliente
   public clienteForm = this.fb.group({
     nif: ['', [Validators.required, Validators.minLength(9), Validators.maxLength(9)]], // El NIF español tiene 9 letras/números
     nombre: ['', [Validators.required, Validators.minLength(3)]],
@@ -25,7 +25,7 @@ export default class Clientes {
     cuota: [false] // Checkbox para saber si pagan mantenimiento (por defecto false)
   });
 
-  // 3. Funciones del formulario
+  // Funciones del formulario
   toggleFormulario() {
     this.mostrarFormulario.update(v => !v);
     if (!this.mostrarFormulario()) {

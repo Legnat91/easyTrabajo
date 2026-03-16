@@ -2,7 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { TareasService } from '../../core/services/tareas.service'; // Revisa que este archivo exista con la 's' final
+import { TareasService } from '../../core/services/tareas.service';
 
 @Component({
   selector: 'app-avisos',
@@ -34,7 +34,7 @@ export default class Avisos {
     this.router.navigate(['/albaranes'], { queryParams: { aviso_id: idTarea } });
   }
 
-  // Nombre de la función corregido (toggle, con 'gg')
+
   toggleFormulario() {
     this.mostrarFormulario.update(valor => !valor);
     this.avisoForm.reset({ importancia: 'Normal', id_empresa: 1 });
@@ -46,12 +46,11 @@ export default class Avisos {
     const nuevoAviso = this.avisoForm.value;
     this.tareasService.agregarTarea(nuevoAviso);
 
-    // Llamamos a la función con el nombre corregido
+
     this.toggleFormulario();
   }
 
 cancelarAviso(idTarea: number) {
-    // Aquí también podríamos poner un modal en el futuro, pero por ahora lo cancelamos directo
     this.tareasService.cancelarTarea(idTarea);
   }
 
