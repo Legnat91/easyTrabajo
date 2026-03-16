@@ -64,14 +64,14 @@ La aplicación se recargará automáticamente si realizas cambios en cualquiera 
 
 El proyecto sigue una estructura basada en "Features" (características) para mantener el código escalable:
 
-src/app/
- ├── core/          # Interfaces y Servicios (Manejo del estado con Signals)
- ├── shared/        # Componentes reutilizables (ej. Navbar)
- ├── layouts/       # Estructuras de página (Dashboard)
- └── features/      # Módulos principales de la aplicación
-      ├── avisos/   
-      ├── albaranes/
-      └── clientes/
+    src/app/
+    ├── core/          # Interfaces y Servicios (Manejo del estado con Signals)
+    ├── shared/        # Componentes reutilizables (ej. Navbar)
+    ├── layouts/       # Estructuras de página (Dashboard)
+    └── features/      # Módulos principales de la aplicación
+          ├── avisos/   
+          ├── albaranes/
+          └── clientes/
 
 ### Próximos Pasos (Roadmap)
 [ ] Conectar el listado dinámico de clientes al formulario de creación de albaranes.
