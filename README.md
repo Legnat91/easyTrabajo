@@ -33,7 +33,7 @@ Asegúrate de tener instalado en tu sistema:
 * [Node.js](https://nodejs.org/) (versión 18 o superior).
 * Angular CLI. Si no lo tienes, instálalo globalmente ejecutando:
  
-  npm install -g @angular/cli
+    npm install -g @angular/cli
 
 ### 2. Clonar el repositorio
 Abre tu terminal y clona este repositorio en tu equipo:
@@ -44,13 +44,13 @@ git clone [https://github.com/Legnat91/easyTrabajo.git](https://github.com/Legna
 ### 3. Instalar dependencias
 Navega a la carpeta del proyecto e instala todos los paquetes necesarios (incluyendo Tailwind):
 
-cd easy-parte
-npm install
+  cd easy-parte
+  npm install
 
 ### 4. Levantar el servidor de desarrollo
 Ejecuta el siguiente comando para compilar la aplicación y levantar el servidor:
 
-ng serve
+  ng serve
 
 ### 5. Abre la aplicación
 Ve a tu navegador web favorito y visita:
