@@ -1,59 +1,81 @@
-# EasyTrabajo
+# EasyParte - Sistema de Gestión de Avisos y Albaranes
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.1.0.
+![Angular](https://img.shields.io/badge/Angular-DD0031?style=for-the-badge&logo=angular&logoColor=white)
+![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
 
-## Development server
+EasyParte es una aplicación web (Single Page Application) diseñada para digitalizar y agilizar el flujo de trabajo interno de una empresa técnica o de servicios. Permite gestionar todo el ciclo de vida de una asistencia: desde la recepción del aviso, pasando por la asignación a un técnico, hasta la redacción y cierre del parte de trabajo (albarán).
 
-To start a local development server, run:
+## Características Principales
 
-```bash
+* **Tablón de Avisos:** Visualización tipo Kanban de las tareas pendientes, en proceso, finalizadas o canceladas.
+* **Gestión de Albaranes:** Creación de partes de trabajo vinculados directamente a los avisos, con autocompletado inteligente de IDs.
+* **Cartera de Clientes:** Directorio interactivo de empresas y clientes particulares.
+* **Cierre en Cascada:** Al confirmar el cierre de un parte de trabajo, el aviso original se da por finalizado automáticamente.
+* **Estado Reactivo:** Uso intensivo de **Angular Signals** para un manejo del estado global ultrarrápido sin recargar la página.
+
+## Stack Tecnológico
+
+Este proyecto está construido íntegramente en el Frontend con las últimas herramientas del ecosistema web:
+* **Framework:** Angular 21+ (Standalone Components, Control Flow `@if/@for`).
+* **Estilos:** Tailwind CSS.
+* **Formularios:** ReactiveForms con validaciones síncronas.
+* **Enrutamiento:** Lazy Loading moderno y paso de parámetros por Query (`ActivatedRoute`).
+
+---
+
+## Instalación y Despliegue Local
+
+Para levantar este proyecto en tu propia máquina, sigue estos pasos:
+
+### 1. Requisitos previos
+Asegúrate de tener instalado en tu sistema:
+* [Node.js](https://nodejs.org/) (versión 18 o superior).
+* Angular CLI. Si no lo tienes, instálalo globalmente ejecutando:
+ 
+  npm install -g @angular/cli
+
+### 2. Clonar el repositorio
+Abre tu terminal y clona este repositorio en tu equipo:
+
+git clone [https://github.com/TU_USUARIO/easy-parte.git](https://github.com/TU_USUARIO/easy-parte.git)
+
+(Nota: Cambia TU_USUARIO por tu nombre de usuario de GitHub o la URL real de tu repositorio).
+
+### 3. Instalar dependencias
+Navega a la carpeta del proyecto e instala todos los paquetes necesarios (incluyendo Tailwind):
+
+cd easy-parte
+npm install
+
+### 4. Levantar el servidor de desarrollo
+Ejecuta el siguiente comando para compilar la aplicación y levantar el servidor:
+
 ng serve
-```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+### 5. Abre la aplicación
+Ve a tu navegador web favorito y visita:
 
-## Code scaffolding
+http://localhost:4200/
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+La aplicación se recargará automáticamente si realizas cambios en cualquiera de los archivos fuente.
 
-```bash
-ng generate component component-name
-```
+### Arquitectura del Proyecto
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+El proyecto sigue una estructura basada en "Features" (características) para mantener el código escalable:
 
-```bash
-ng generate --help
-```
+src/app/
+ ├── core/          # Interfaces y Servicios (Manejo del estado con Signals)
+ ├── shared/        # Componentes reutilizables (ej. Navbar)
+ ├── layouts/       # Estructuras de página (Dashboard)
+ └── features/      # Módulos principales de la aplicación
+      ├── avisos/   
+      ├── albaranes/
+      └── clientes/
 
-## Building
+### Próximos Pasos (Roadmap)
+[ ] Conectar el listado dinámico de clientes al formulario de creación de albaranes.
 
-To build the project run:
+[ ] Desarrollar el sistema de Autenticación (Login) y proteger las rutas con Guards.
 
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+[ ] Migrar el "falso backend" (Signals) a llamadas HTTP reales conectadas a una API REST en PHP/MySQL.

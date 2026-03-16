@@ -5,7 +5,6 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
   selector: 'app-navbar',
   imports: [RouterLink,RouterLinkActive],
   templateUrl: './navbar.html',
-  styleUrl: './navbar.css',
 })
 export class Navbar {
 currentUser = signal('Ángel de la Calle Fernández(DevOps))');
