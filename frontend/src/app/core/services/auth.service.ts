@@ -29,7 +29,7 @@ export class AuthService {
 
   // Función de Login
   login(email: string, password: string): boolean {
-    // 🚧 SIMULADOR: Si los datos son estos, le dejamos pasar
+    // SIMULADOR: Si los datos son estos, le dejamos pasar
     if (email === 'admin@easyparte.com' && password === '1234') {
 
       const usuarioSimulado: Usuario = { id: 5, nombre: 'Juan Pérez', email, rol: 'Administrador' };
