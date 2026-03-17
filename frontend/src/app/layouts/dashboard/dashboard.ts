@@ -8,6 +8,6 @@ import { Navbar } from '../../shared/components/navbar/navbar';
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',
 })
-export class Dashboard {
+export default class Dashboard {
 
 }

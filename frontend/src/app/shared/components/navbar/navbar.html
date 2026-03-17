@@ -41,7 +41,7 @@
                 <span>⚙️</span> Configuración
               </a>
               <div class="border-t border-green-100 my-1"></div>
-              <button class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 font-medium">
+              <button (click)="cerrarSesion()" class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 font-medium">
                 Cerrar Sesión
               </button>
             </div>
@@ -86,7 +86,7 @@
         </div>
         <div class="mt-3 px-2 space-y-1">
           <a routerLink="/configuracion" (click)="cerrarMenu()" class="block px-3 py-2 rounded-md text-base font-medium text-green-300 hover:text-white hover:bg-green-700">⚙️ Configuración</a>
-          <button class="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-red-400 hover:text-white hover:bg-red-900/50">Cerrar Sesión</button>
+          <button (click)="cerrarSesion()" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-red-400 hover:text-white hover:bg-red-900/50">Cerrar Sesión</button>
         </div>
       </div>
     </div>
