@@ -1,6 +1,11 @@
-RewriteEngine On
-
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-
-RewriteRule ^ index.php [QSA,L]
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    
+    # Si lo que pide Angular NO es un archivo real (.jpg, .css)...
+    RewriteCond %{REQUEST_FILENAME} !-f
+    # ...y NO es un directorio real...
+    RewriteCond %{REQUEST_FILENAME} !-d
+    
+    # ...entonces mándalo TODO al index.php de forma invisible
+    RewriteRule ^(.*)$ index.php [QSA,L]
+</IfModule>

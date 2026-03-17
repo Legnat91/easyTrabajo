@@ -1,4 +1,4 @@
-import {Component, inject, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../core/services/auth.service';
 import { email } from '@angular/forms/signals';
@@ -10,25 +10,28 @@ import { email } from '@angular/forms/signals';
 })
 
 export default class Login {
-  private fb=inject(FormBuilder);
-  private authService=inject(AuthService);
+  private fb = inject(FormBuilder);
+  private authService = inject(AuthService);
 
-  public errorLogin=signal(false);
+  public errorLogin = signal(false);
   //IMPORTANTE quitar
-  public loginForm=this.fb.group({
-    email:['admin@easyparte.com',[Validators.required,Validators.email]],
-    password:['1234',[Validators.required]]
+  public loginForm = this.fb.group({
+    email: ['', [Validators.required, Validators.email]],
+    password: ['', [Validators.required]]
 
   });
 
-  iniciarSesion(){
-    if(this.loginForm.invalid) return;
-    const {email, password}=this.loginForm.value;
+  async iniciarSesion() {
+    if (this.loginForm.invalid) return;
+    const { email, password } = this.loginForm.value;
 
-    const exito=this.authService.login(email!, password!);
+    const exito = await this.authService.login(email!, password!);
 
-    if(!exito){
+    if (!exito) {
       this.errorLogin.set(true);
+    } else {
+      this.errorLogin.set(false);
     }
   }
- }
+
+}

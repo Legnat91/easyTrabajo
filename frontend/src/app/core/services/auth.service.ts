@@ -1,12 +1,13 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { Router } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
+import { firstValueFrom } from 'rxjs';
 
-// Definimos cómo es un Usuario en nuestra app
 export interface Usuario {
-  id: number;
+  id_usuario: number;
   nombre: string;
   email: string;
-  rol: 'Administrador' | 'Tecnico' | 'Recepcion';
+  id_empresa: number;
 }
 
 @Injectable({
@@ -14,45 +15,48 @@ export interface Usuario {
 })
 export class AuthService {
   private router = inject(Router);
+  private http = inject(HttpClient); // Inyectamos la herramienta para llamadas reales
 
-  // Señal que guarda el usuario actual. Si es null, nadie está logueado.
   public usuarioActual = signal<Usuario | null>(null);
 
+  // URL del backend
+  private apiUrl = 'http://localhost/easyTrabajo/backend/public/api/login';
+
   constructor() {
-    // Al recargar la página, miramos si hay un token guardado para mantener la sesión
+    // Al recargar, recuperamos el usuario si ya estaba logueado
     const token = localStorage.getItem('easyparte_token');
-    if (token) {
-      // Si hay token simulamos que el usuario ya estaba dentro
-      this.usuarioActual.set({ id: 5, nombre: 'Juan Pérez', email: 'admin@easyparte.com', rol: 'Administrador' });
+    const user = localStorage.getItem('easyparte_user');
+    if (token && user) {
+      this.usuarioActual.set(JSON.parse(user));
     }
   }
 
-  // Función de Login
-  login(email: string, password: string): boolean {
-    // SIMULADOR: Si los datos son estos, le dejamos pasar
-    if (email === 'admin@easyparte.com' && password === '1234') {
+  async login(email: string, password: string): Promise<boolean> {
+    try {
+      // Hacemos un POST real a nuestro PHP
+      const respuesta: any = await firstValueFrom(
+        this.http.post(`${this.apiUrl}/login`, { email, password })
+      );
 
-      const usuarioSimulado: Usuario = { id: 5, nombre: 'Juan Pérez', email, rol: 'Administrador' };
+      // Si PHP responde con un 200 OK, guardamos los datos reales
+      this.usuarioActual.set(respuesta.usuario);
+      localStorage.setItem('easyparte_token', respuesta.token);
+      localStorage.setItem('easyparte_user', JSON.stringify(respuesta.usuario));
 
-      // Guardamos el usuario en la memoria rápida (Signal)
-      this.usuarioActual.set(usuarioSimulado);
-
-      //Guardamos un token falso en el navegador (Para que no se borre al darle a F5)
-      localStorage.setItem('easyparte_token', 'token_falso_jwt_123456');
-
-      //Le mandamos al panel principal
       this.router.navigate(['/avisos']);
       return true;
 
-    } else {
-      return false; // Credenciales incorrectas
+    } catch (error) {
+      // Si PHP responde con un 401í
+      console.error("Fallo de autenticación", error);
+      return false;
     }
   }
 
   logout() {
-    // Limpiamos todo y lo mandamos a la calle
     this.usuarioActual.set(null);
     localStorage.removeItem('easyparte_token');
+    localStorage.removeItem('easyparte_user');
     this.router.navigate(['/login']);
   }
 }
