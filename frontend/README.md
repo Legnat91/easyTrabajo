@@ -54,9 +54,11 @@ Para ejecutar este proyecto en tu máquina local, necesitas tener instalado **No
    npm install
 
 3. Levanta el servidor de desarrollo de Angular:
+
   ng serve
 
 4. Abre tu navegador y navega a http://localhost:4200.
+
   Estado del Proyecto (Roadmap)
   [x] Arquitectura base y Front Controller (PHP).
 
