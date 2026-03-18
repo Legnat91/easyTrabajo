@@ -1,43 +1,77 @@
-import { Injectable, signal } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
 import { Cliente } from '../interfaces/cliente.interfaces';
+import { HttpClient } from '@angular/common/http';
+import { firstValueFrom } from 'rxjs';
+
+
 
 @Injectable({
   providedIn: 'root'
 })
 
 export class ClientesService {
-
-  public clientes = signal<Cliente[]>([
-    {
-      id_cliente: 1,
-      nif: 'B12345678',
-      nombre: 'Empresa Tecnológica S.L.',
-      poblacion: 'Madrid',
-      direccion: 'Calle de la Innovación, 45',
-      prefijo: 34,
-      contacto: 600112233,
-      cuota: true // Este cliente tiene contrato de mantenimiento
-    },
-    {
-      id_cliente: 2,
-      nif: '45678912A',
-      nombre: 'Gestoría Martínez',
-      poblacion: 'Valencia',
-      direccion: 'Avenida de los Contables, 12',
-      prefijo: 34,
-      contacto: 655998877,
-      cuota: false
-    }
-  ]);
-
-  agregarCliente(nuevoCliente: Cliente) {
-    this.clientes.update(actuales => {
-
-      const maxId = actuales.length > 0 ? Math.max(...actuales.map(c => c.id_cliente || 0)) : 0;
+  private http = inject(HttpClient);
+  private apiUrl = 'http://localhost/easyTrabajo/backend/public/api';
+  // Usamos un Signal para guardar la lista de clientes reactivamente
+  public clientes = signal<Cliente[]>([]);
 
 
-      return [{ ...nuevoCliente, id_cliente: maxId + 1 }, ...actuales];
+  // Función para cargar los clientes desde PHP
+  cargarClientes() {
+    this.http.get<Cliente[]>(`${this.apiUrl}/clientes`).subscribe({
+      next: (datosReales) => {
+        this.clientes.set(datosReales);
+      },
+      error: (error) => {
+        console.error("Error al cargar clientes:", error);
+      }
     });
+  }
+
+  async agregarCliente(nuevoCliente: Cliente): Promise<boolean> {
+    try {
+      // Hacemos la petición POST a PHP esperando la respuesta
+      const respuesta: any = await firstValueFrom(
+        this.http.post(`${this.apiUrl}/clientes`, nuevoCliente)
+      );
+
+      // Si PHP lo ha guardado bien, nos devolverá el cliente con su ID real de MariaDB.
+      // Lo añadimos a nuestro Signal para que aparezca en la tabla al instante.
+      this.clientes.update(actuales => [respuesta.cliente, ...actuales]);
+      return true;
+
+    } catch (error) {
+      console.error("Error al guardar el cliente en PHP:", error);
+      return false;
+    }
+  }
+
+  async actualizarCliente(id: number, datosCliente: any): Promise<boolean> {
+    try {
+      await firstValueFrom(this.http.put(`${this.apiUrl}/clientes/${id}`, datosCliente));
+
+      // Actualizamos la tabla visual sustituyendo el cliente viejo por el nuevo
+      this.clientes.update(actuales =>
+        actuales.map(c => c.id_cliente === id ? { ...c, ...datosCliente } : c)
+      );
+      return true;
+    } catch (error) {
+      console.error("Error al actualizar el cliente:", error);
+      return false;
+    }
+  }
+
+  async eliminarCliente(id: number): Promise<boolean> {
+    try {
+      await firstValueFrom(this.http.delete(`${this.apiUrl}/clientes/${id}`));
+
+      // Lo quitamos de la tabla visual al instante
+      this.clientes.update(actuales => actuales.filter(c => c.id_cliente !== id));
+      return true;
+    } catch (error) {
+      console.error("Error al eliminar el cliente:", error);
+      return false;
+    }
   }
 
 }

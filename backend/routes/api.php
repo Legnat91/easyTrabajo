@@ -7,15 +7,39 @@ if ($indice_api !== false && isset($partes_ruta[$indice_api + 1])) {
 
     switch ($endpoint) {
         case 'login':
-            // 1. Requerimos el controlador
+            // Requerimos el controlador
             require_once __DIR__ . '/../controllers/AuthController.php';
-            
-            // 2. Leemos el JSON que nos manda Angular en el "Body" de la petición POST
+
+            // Leemos el JSON que nos manda Angular en el "Body" de la petición POST
             $datos = json_decode(file_get_contents("php://input"));
-            
-            // 3. Pasamos el control al AuthController
+
+            // Pasamos el control al AuthController
             $auth = new AuthController($conexion);
             $auth->login($datos);
+            break;
+
+        case 'clientes':
+            require_once __DIR__ . '/../controllers/ClienteController.php';
+            $clienteController = new ClienteController($conexion);
+            // Comprobamos si nos mandan una ID por la URL 
+            $id = isset($partes_ruta[$indice_api + 2]) ? $partes_ruta[$indice_api + 2] : null;
+
+            if ($metodo === 'GET') {
+                // Angular quiere leer la lista
+                $clienteController->getAll();
+            } elseif ($metodo === 'POST') {
+                //  Angular quiere guardar un cliente nuevo
+                // Leemos el JSON que nos manda Angular en el cuerpo de la petición
+                $datos = json_decode(file_get_contents("php://input"));
+                $clienteController->create($datos);
+            } elseif ($metodo === 'PUT' && $id) {
+                // PUT es para actualizar
+                $datos = json_decode(file_get_contents("php://input"));
+                $clienteController->update($id, $datos);
+            } elseif ($metodo === 'DELETE' && $id) {
+                // DELETE es para borrar
+                $clienteController->delete($id);
+            }
             break;
 
         case 'setup':
@@ -48,4 +72,3 @@ if ($indice_api !== false && isset($partes_ruta[$indice_api + 1])) {
     http_response_code(404);
     echo json_encode(["error" => "No se ha especificado un endpoint válido en la API."]);
 }
-?>

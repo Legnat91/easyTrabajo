@@ -1,81 +1,71 @@
-# EasyParte - Sistema de Gestión de Avisos y Albaranes
+# 🚀 EasyParte (easyTrabajo)
 
-![Angular](https://img.shields.io/badge/Angular-DD0031?style=for-the-badge&logo=angular&logoColor=white)
+![Angular](https://img.shields.io/badge/Angular-21+-DD0031?style=for-the-badge&logo=angular&logoColor=white)
+![PHP](https://img.shields.io/badge/PHP-Vanilla_OOP-777BB4?style=for-the-badge&logo=php&logoColor=white)
+![MariaDB](https://img.shields.io/badge/MariaDB-003545?style=for-the-badge&logo=mariadb&logoColor=white)
 ![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
-![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
 
-EasyParte es una aplicación web (Single Page Application) diseñada para digitalizar y agilizar el flujo de trabajo interno de una empresa técnica o de servicios. Permite gestionar todo el ciclo de vida de una asistencia: desde la recepción del aviso, pasando por la asignación a un técnico, hasta la redacción y cierre del parte de trabajo (albarán).
+**EasyParte** es una Aplicación Web (SPA) Full-Stack diseñada para la gestión interna de una empresa de servicios. Permite administrar de forma eficiente la cartera de clientes, los avisos (tareas/tickets) y los partes de trabajo (albaranes).
 
-## Características Principales
+## 🛠️ Stack Tecnológico
 
-* **Tablón de Avisos:** Visualización tipo Kanban de las tareas pendientes, en proceso, finalizadas o canceladas.
-* **Gestión de Albaranes:** Creación de partes de trabajo vinculados directamente a los avisos, con autocompletado inteligente de IDs.
-* **Cartera de Clientes:** Directorio interactivo de empresas y clientes particulares.
-* **Cierre en Cascada:** Al confirmar el cierre de un parte de trabajo, el aviso original se da por finalizado automáticamente.
-* **Estado Reactivo:** Uso intensivo de **Angular Signals** para un manejo del estado global ultrarrápido sin recargar la página.
+### Frontend
+* **Framework**: Angular 21+ (Standalone Components).
+* **Rendimiento**: Motor Zoneless Change Detection y Signals (`signal`, `update`, `set`) para una interfaz ultra-reactiva.
+* **Estilos**: Tailwind CSS (Diseño Mobile-First, UI limpia y moderna).
+* **Formularios**: Reactive Forms con validaciones asíncronas.
+* **Seguridad**: Guards de enrutamiento (`authGuard`) y manejo de estado de sesión.
 
-## Stack Tecnológico
+### Backend
+* **Lenguaje**: PHP puro (Vanilla) orientado a objetos.
+* **Arquitectura**: API RESTful con patrón Front Controller (`index.php`) y enrutador dinámico.
+* **Base de Datos**: MariaDB / MySQL estructurada para Multitenant.
+* **Seguridad**: Conexiones PDO para evitar inyecciones SQL y encriptación de contraseñas con `bcrypt` (`password_hash`).
 
-Este proyecto está construido íntegramente en el Frontend con las últimas herramientas del ecosistema web:
-* **Framework:** Angular 21+ (Standalone Components, Control Flow `@if/@for`).
-* **Estilos:** Tailwind CSS.
-* **Formularios:** ReactiveForms con validaciones síncronas.
-* **Enrutamiento:** Lazy Loading moderno y paso de parámetros por Query (`ActivatedRoute`).
+## ✨ Características Principales
 
----
+- 🔐 **Sistema de Autenticación**: Login real conectado a la base de datos con persistencia de sesión segura en el cliente.
+- 👥 **Gestión de Clientes (CRUD Avanzado)**:
+  - Listado dinámico con actualizaciones en tiempo real (Signals).
+  - **Soft Delete**: Los clientes no se borran de la base de datos (`activo = 0`) para mantener la integridad referencial de facturas y albaranes.
+  - **Upsert Inteligente**: Si se intenta crear un cliente que fue "borrado" previamente (mismo NIF), el sistema lo detecta, lo resucita y actualiza sus datos automáticamente evitando errores de duplicidad.
+- ⚡ **Rendimiento Optimizado**: Uso de *Lazy Loading* para cargar los módulos solo cuando el usuario los necesita.
 
-## Instalación y Despliegue Local
+## 📂 Arquitectura del Proyecto
 
-Para levantar este proyecto en tu propia máquina, sigue estos pasos:
+El proyecto se divide en dos partes principales:
+* `/frontend`: Aplicación cliente en Angular.
+* `/backend`: API REST en PHP que sirve los datos.
 
-### 1. Requisitos previos
-Asegúrate de tener instalado en tu sistema:
-* [Node.js](https://nodejs.org/) (versión 18 o superior).
-* Angular CLI. Si no lo tienes, instálalo globalmente ejecutando:
- 
-    npm install -g @angular/cli
+## 🚀 Instalación y Despliegue Local
 
-### 2. Clonar el repositorio
-Abre tu terminal y clona este repositorio en tu equipo:
+Para ejecutar este proyecto en tu máquina local, necesitas tener instalado **Node.js**, **Angular CLI** y un servidor local como **XAMPP** (Apache + MySQL/MariaDB).
 
-git clone [https://github.com/Legnat91/easyTrabajo.git](https://github.com/Legnat91/easyTrabajo.git)
+### 1. Preparar el Backend (XAMPP)
+1. Clona este repositorio dentro de la carpeta `htdocs` de XAMPP. La ruta debería quedar así: `C:/xampp/htdocs/easyTrabajo`.
+2. Inicia los servicios de **Apache** y **MySQL** en el panel de control de XAMPP.
+3. Abre phpMyAdmin (`http://localhost/phpmyadmin`) y crea una base de datos vacía.
+4. *(Opcional)*: Ejecuta el endpoint de configuración inicial navegando a `http://localhost/easyTrabajo/backend/public/api/setup` para crear las tablas base y un usuario administrador de prueba.
 
+### 2. Preparar el Frontend (Angular)
+1. Abre una terminal en la carpeta `/frontend` del proyecto.
+2. Instala las dependencias:
+   ```bash
+   npm install
 
-### 3. Instalar dependencias
-Navega a la carpeta del proyecto e instala todos los paquetes necesarios (incluyendo Tailwind):
-
-  cd easy-parte
-  
-  npm install
-
-### 4. Levantar el servidor de desarrollo
-Ejecuta el siguiente comando para compilar la aplicación y levantar el servidor:
-
+3. Levanta el servidor de desarrollo de Angular:
   ng serve
 
-### 5. Abre la aplicación
-Ve a tu navegador web favorito y visita:
+4. Abre tu navegador y navega a http://localhost:4200.
+  Estado del Proyecto (Roadmap)
+  [x] Arquitectura base y Front Controller (PHP).
 
-http://localhost:4200/
+  [x] UI/UX y Layouts principales (Angular + Tailwind).
 
-La aplicación se recargará automáticamente si realizas cambios en cualquiera de los archivos fuente.
+  [x] Módulo de Autenticación.
 
-### Arquitectura del Proyecto
+  [x] Módulo de Clientes (CRUD completo).
 
-El proyecto sigue una estructura basada en "Features" (características) para mantener el código escalable:
+  [ ] Módulo de Avisos (Kanban/Listado de tareas).
 
-    src/app/
-    ├── core/          # Interfaces y Servicios (Manejo del estado con Signals)
-    ├── shared/        # Componentes reutilizables (ej. Navbar)
-    ├── layouts/       # Estructuras de página (Dashboard)
-    └── features/      # Módulos principales de la aplicación
-          ├── avisos/   
-          ├── albaranes/
-          └── clientes/
-
-### Próximos Pasos (Roadmap)
-[ ] Conectar el listado dinámico de clientes al formulario de creación de albaranes.
-
-[ ] Desarrollar el sistema de Autenticación (Login) y proteger las rutas con Guards.
-
-[ ] Migrar el "falso backend" (Signals) a llamadas HTTP reales conectadas a una API REST en PHP/MySQL.
+  [ ] Módulo de Albaranes (Partes de trabajo).
