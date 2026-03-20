@@ -9,7 +9,7 @@ export interface Tarea {
   telefono_contacto?: string;
 
   //Claves foraneas
-  id_empleado?: number;
+  id_empleado?: number|null;
   id_cliente?: number;
   id_departamento?: number;
   id_empresa: number;

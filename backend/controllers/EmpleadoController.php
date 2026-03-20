@@ -1,0 +1,86 @@
+<?php
+class EmpleadoController
+{
+    private $conn;
+    private $tabla = "empleado";
+
+    public function __construct($db)
+    {
+        $this->conn = $db;
+    }
+
+    // OBTENER TODOS LOS EMPLEADOS
+    public function getAll()
+    {
+        $query = "SELECT * FROM " . $this->tabla . " WHERE activo = 1 ORDER BY nombre ASC";
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute();
+
+        if ($stmt->rowCount() > 0) {
+            $empleados_arr = array();
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                array_push($empleados_arr, $row);
+            }
+            http_response_code(200);
+            echo json_encode($empleados_arr);
+        } else {
+            http_response_code(200);
+            echo json_encode([]);
+        }
+    }
+
+    // CREAR UN EMPLEADO
+    public function create($data)
+    {
+        if (empty($data->nombre) || empty($data->apellido)) {
+            http_response_code(400);
+            echo json_encode(["error" => "El nombre y el primer apellido son obligatorios."]);
+            return;
+        }
+
+        $query = "INSERT INTO " . $this->tabla . " 
+                  (nombre, apellido, apellido_2, extension_tel, prefijo, movil, nif, id_departamento, id_empresa, activo) 
+                  VALUES (:nombre, :apellido, :apellido_2, :extension_tel, :prefijo, :movil, :nif, :id_departamento, :id_empresa, 1)";
+
+        $stmt = $this->conn->prepare($query);
+
+        $apellido_2 = property_exists($data, 'apellido_2') ? $data->apellido_2 : null;
+        $extension_tel = property_exists($data, 'extension_tel') ? $data->extension_tel : null;
+        $prefijo = !empty($data->prefijo) ? $data->prefijo : '+34';
+        $movil = property_exists($data, 'movil') ? $data->movil : null;
+        $nif = property_exists($data, 'nif') ? $data->nif : null;
+        $id_departamento = !empty($data->id_departamento) ? $data->id_departamento : null;
+        $id_empresa = !empty($data->id_empresa) ? $data->id_empresa : 1;
+
+        $stmt->bindParam(":nombre", $data->nombre);
+        $stmt->bindParam(":apellido", $data->apellido);
+        $stmt->bindParam(":apellido_2", $apellido_2);
+        $stmt->bindParam(":extension_tel", $extension_tel);
+        $stmt->bindParam(":prefijo", $prefijo);
+        $stmt->bindParam(":movil", $movil);
+        $stmt->bindParam(":nif", $nif);
+        $stmt->bindParam(":id_departamento", $id_departamento);
+        $stmt->bindParam(":id_empresa", $id_empresa);
+
+        try {
+            if ($stmt->execute()) {
+                $id_insertado = $this->conn->lastInsertId();
+
+                $query_get = "SELECT * FROM " . $this->tabla . " WHERE id_empleado = :id";
+                $stmt_get = $this->conn->prepare($query_get);
+                $stmt_get->bindParam(":id", $id_insertado);
+                $stmt_get->execute();
+
+                http_response_code(201);
+                echo json_encode([
+                    "mensaje" => "Empleado creado con éxito",
+                    "empleado" => $stmt_get->fetch(PDO::FETCH_ASSOC)
+                ]);
+            }
+        } catch (PDOException $e) {
+            http_response_code(400);
+            echo json_encode(["error" => "Error al guardar el empleado. Detalle: " . $e->getMessage()]);
+        }
+    }
+}
+?>

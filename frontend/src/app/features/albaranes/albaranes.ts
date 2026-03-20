@@ -4,7 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 
 import { AlbaranesService } from '../../core/services/albaranes.service';
-import { TareasService } from '../../core/services/tareas.service';
+import { TareasService } from '../../core/services/avisos.service';
 import { ClientesService } from '../../core/services/clientes.service';
 
 @Component({

@@ -54,9 +54,13 @@ CREATE TABLE empleado(
     nif VARCHAR(9) UNIQUE,
     activo BOOLEAN NOT NULL DEFAULT TRUE,
     id_departamento INT,
+    id_empresa INT,
     CONSTRAINT fk_empleado_departamento
         FOREIGN KEY (id_departamento)
-        REFERENCES departamento(id_departamento)
+        REFERENCES departamento(id_departamento),
+    CONSTRAINT fk_empleado_empresa
+        FOREIGN KEY (id_empresa)
+        REFERENCES empresa(id_empresa);
 );
 
 CREATE TABLE usuario(
@@ -132,3 +136,9 @@ CREATE TABLE parte_trabajo(
     CONSTRAINT fk_parte_trabajo_tarea
         FOREIGN KEY (id_tarea) REFERENCES tarea(id_tarea)
 );
+
+INSERT INTO rol (nombre) VALUES 
+('Administrador'),
+('Técnico'),
+('Atención al Cliente');
+

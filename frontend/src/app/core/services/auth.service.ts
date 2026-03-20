@@ -24,8 +24,8 @@ export class AuthService {
 
   constructor() {
     // Al recargar, recuperamos el usuario si ya estaba logueado
-    const token = localStorage.getItem('easyparte_token');
-    const user = localStorage.getItem('easyparte_user');
+    const token = sessionStorage.getItem('easyparte_token');
+    const user = sessionStorage.getItem('easyparte_user');
     if (token && user) {
       this.usuarioActual.set(JSON.parse(user));
     }
@@ -40,8 +40,8 @@ export class AuthService {
 
       // Si PHP responde con un 200 OK, guardamos los datos reales
       this.usuarioActual.set(respuesta.usuario);
-      localStorage.setItem('easyparte_token', respuesta.token);
-      localStorage.setItem('easyparte_user', JSON.stringify(respuesta.usuario));
+      sessionStorage.setItem('easyparte_token', respuesta.token);
+      sessionStorage.setItem('easyparte_user', JSON.stringify(respuesta.usuario));
 
       this.router.navigate(['/avisos']);
       return true;
@@ -55,8 +55,8 @@ export class AuthService {
 
   logout() {
     this.usuarioActual.set(null);
-    localStorage.removeItem('easyparte_token');
-    localStorage.removeItem('easyparte_user');
+    sessionStorage.removeItem('easyparte_token');
+    sessionStorage.removeItem('easyparte_user');
     this.router.navigate(['/login']);
   }
 }
