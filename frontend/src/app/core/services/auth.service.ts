@@ -2,44 +2,37 @@ import { inject, Injectable, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
-
-export interface Usuario {
-  id_usuario: number;
-  nombre: string;
-  email: string;
-  id_empresa: number;
-}
+import { Usuario } from '../interfaces/auth.interfaces';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
   private router = inject(Router);
-  private http = inject(HttpClient); // Inyectamos la herramienta para llamadas reales
+  private http = inject(HttpClient);
 
   public usuarioActual = signal<Usuario | null>(null);
 
-  // URL del backend
-  private apiUrl = 'http://localhost/easyTrabajo/backend/public/api/login';
+  private apiUrl = 'http://localhost/easyTrabajo/backend/public/api';
 
   constructor() {
-    // Al recargar, recuperamos el usuario si ya estaba logueado
-    const token = sessionStorage.getItem('easyparte_token');
+    // Recuperamos al recargar
     const user = sessionStorage.getItem('easyparte_user');
-    if (token && user) {
+    if (user) {
       this.usuarioActual.set(JSON.parse(user));
     }
   }
 
   async login(email: string, password: string): Promise<boolean> {
     try {
-      // Hacemos un POST real a nuestro PHP
+      // Llamada limpia a /login
       const respuesta: any = await firstValueFrom(
         this.http.post(`${this.apiUrl}/login`, { email, password })
       );
 
-      // Si PHP responde con un 200 OK, guardamos los datos reales
+      // Guardamos el usuario para el Signal y el token para el Interceptor
       this.usuarioActual.set(respuesta.usuario);
+
       sessionStorage.setItem('easyparte_token', respuesta.token);
       sessionStorage.setItem('easyparte_user', JSON.stringify(respuesta.usuario));
 
@@ -47,7 +40,6 @@ export class AuthService {
       return true;
 
     } catch (error) {
-      // Si PHP responde con un 401í
       console.error("Fallo de autenticación", error);
       return false;
     }

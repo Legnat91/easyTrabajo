@@ -51,7 +51,7 @@ export default class Albaranes implements OnInit {
 
         this.mostrarFormulario.set(true);
       }
-      // CASO B: Venimos directamente desde la tabla de CLIENTES (NUEVO)
+      // CASO B: Venimos directamente desde la tabla de CLIENTES
       else if (params['cliente_id']) {
         const idCliente = Number(params['cliente_id']);
 

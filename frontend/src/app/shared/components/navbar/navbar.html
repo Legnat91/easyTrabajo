@@ -2,7 +2,7 @@
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="flex items-center justify-between h-16">
 
-      <div class="flex-shrink-0 font-bold text-xl tracking-wider">
+      <div class="shrink-0 font-bold text-xl tracking-wider">
         Easy<span class="text-lime-400">Parte</span>
       </div>
 
@@ -16,6 +16,13 @@
 
           <a routerLink="/clientes" routerLinkActive="bg-lime-700 text-white"
              class="text-white hover:bg-green-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">Clientes</a>
+
+          @if (usuarioActual()?.rol_nombre === 'Administrador') {
+            <a routerLink="/administracion" routerLinkActive="bg-lime-700 text-white"
+               class="text-lime-300 hover:bg-green-700 hover:text-white px-3 py-2 rounded-md text-sm font-bold transition-colors">
+               Administración
+            </a>
+          }
         </div>
       </div>
 
@@ -24,24 +31,20 @@
 
           <button (click)="togglePerfil()" class="flex items-center gap-2 bg-green-800 hover:bg-green-700 px-3 py-1.5 rounded-full focus:outline-none transition-colors">
             <div class="h-8 w-8 rounded-full bg-lime-500 flex items-center justify-center font-bold text-white shadow-inner">
-              {{ usuarioActual().nombre.charAt(0) }}
+              {{ usuarioActual()?.nombre?.charAt(0) || '?' }}
             </div>
             <div class="flex flex-col items-start text-xs text-left hidden lg:flex">
-              <span class="font-bold leading-tight">{{ usuarioActual().nombre }}</span>
-              <span class="text-green-400 leading-tight">{{ usuarioActual().rol }}</span>
+              <span class="font-bold leading-tight">{{ usuarioActual()?.nombre }}</span>
+              <span class="text-green-400 leading-tight">{{ usuarioActual()?.rol_nombre || 'Sin Rol' }}</span>
             </div>
             <svg class="w-4 h-4 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
             </svg>
           </button>
 
-          @if (perfilAbierto()) {
+        @if (perfilAbierto()) {
             <div class="absolute right-0 top-full mt-2 w-48 bg-white rounded-md shadow-lg py-1 ring-1 ring-black ring-opacity-5 origin-top-right">
-              <a routerLink="/configuracion" (click)="cerrarPerfil()" class="block px-4 py-2 text-sm text-green-700 hover:bg-green-100 flex items-center gap-2">
-                <span>⚙️</span> Configuración
-              </a>
-              <div class="border-t border-green-100 my-1"></div>
-              <button (click)="cerrarSesion()" class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 font-medium">
+              <button (click)="cerrarSesion()" class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 hover:rounded-md font-medium">
                 Cerrar Sesión
               </button>
             </div>
@@ -72,20 +75,23 @@
         <a routerLink="/avisos" (click)="cerrarMenu()" routerLinkActive="bg-green-900 text-white" [routerLinkActiveOptions]="{exact: true}" class="text-green-300 hover:bg-green-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Avisos</a>
         <a routerLink="/albaranes" (click)="cerrarMenu()" routerLinkActive="bg-green-900 text-white" class="text-green-300 hover:bg-green-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Albaranes</a>
         <a routerLink="/clientes" (click)="cerrarMenu()" routerLinkActive="bg-green-900 text-white" class="text-green-300 hover:bg-green-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Clientes</a>
+
+        @if (usuarioActual()?.rol_nombre === 'Administrador') {
+          <a routerLink="/administracion" (click)="cerrarMenu()" routerLinkActive="bg-green-900 text-white" class="text-lime-300 hover:bg-green-700 hover:text-white block px-3 py-2 rounded-md text-base font-bold border-l-4 border-lime-400 pl-2">Administración</a>
+        }
       </div>
 
       <div class="pt-4 pb-3 border-t border-green-700 bg-green-800/50">
         <div class="flex items-center px-5 gap-3">
           <div class="h-10 w-10 rounded-full bg-lime-500 flex items-center justify-center font-bold text-white text-lg shadow-inner">
-            {{ usuarioActual().nombre.charAt(0) }}
+            {{ usuarioActual()?.nombre?.charAt(0) || '?' }}
           </div>
           <div>
-            <div class="text-base font-medium text-white leading-tight">{{ usuarioActual().nombre }}</div>
-            <div class="text-sm font-medium text-green-400 leading-tight">{{ usuarioActual().rol }}</div>
+            <div class="text-base font-medium text-white leading-tight">{{ usuarioActual()?.nombre }}</div>
+            <div class="text-sm font-medium text-green-400 leading-tight">{{ usuarioActual()?.rol_nombre || 'Sin Rol' }}</div>
           </div>
         </div>
-        <div class="mt-3 px-2 space-y-1">
-          <a routerLink="/configuracion" (click)="cerrarMenu()" class="block px-3 py-2 rounded-md text-base font-medium text-green-300 hover:text-white hover:bg-green-700">⚙️ Configuración</a>
+       <div class="mt-3 px-2 space-y-1">
           <button (click)="cerrarSesion()" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-red-400 hover:text-white hover:bg-red-900/50">Cerrar Sesión</button>
         </div>
       </div>

@@ -6,7 +6,6 @@ import { Navbar } from '../../shared/components/navbar/navbar';
   selector: 'app-dashboard',
   imports: [RouterOutlet,Navbar],
   templateUrl: './dashboard.html',
-  styleUrl: './dashboard.css',
 })
 export default class Dashboard {
 

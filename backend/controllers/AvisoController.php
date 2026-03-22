@@ -1,4 +1,5 @@
 <?php
+
 class AvisoController
 {
     private $conn;
@@ -9,28 +10,42 @@ class AvisoController
         $this->conn = $db;
     }
 
-    //CARGAR AVIOS
-    public function getAll()
+    // CARGAR AVISOS 
+    public function getAll($usuarioLogueado)
     {
-        $query = "SELECT * FROM " . $this->tabla . " ORDER BY fecha_alta DESC";
-        $stmt = $this->conn->prepare($query);
-        $stmt->execute();
-
-        if ($stmt->rowCount() > 0) {
-            $avisos_arr = array();
-            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                array_push($avisos_arr, $row);
-            }
-            http_response_code(200);
-            echo json_encode($avisos_arr);
-        } else {
-            http_response_code(200);
-            echo json_encode([]);
+        // Seguridad: Filtramos siempre por id_empresa y añadimos JOINs para ver nombres
+        $query = "SELECT 
+                    a.*, 
+                    c.nombre as cliente_nombre,
+                    CONCAT(e.nombre, ' ', e.apellido) as tecnico_nombre
+                  FROM " . $this->tabla . " a
+                  LEFT JOIN cliente c ON a.id_cliente = c.id_cliente
+                  LEFT JOIN empleado e ON a.id_empleado = e.id_empleado
+                  WHERE a.id_empresa = :id_empresa ";
+        
+        // Si es Técnico, solo ve sus avisos o los que no tienen nadie asignado
+        if ($usuarioLogueado->rol_nombre === 'Técnico') {
+            $query .= " AND (a.id_empleado = :id_empleado OR a.id_empleado IS NULL)";
         }
+
+        $query .= " ORDER BY a.fecha_alta DESC";
+        
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(":id_empresa", $usuarioLogueado->id_empresa);
+        
+        if ($usuarioLogueado->rol_nombre === 'Técnico') {
+            $stmt->bindParam(":id_empleado", $usuarioLogueado->id_empleado);
+        }
+
+        $stmt->execute();
+        $avisos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        http_response_code(200);
+        echo json_encode($avisos ? $avisos : []);
     }
 
-    //CREAR AVISO
-    public function create($data)
+    // CREAR AVISO 
+    public function create($data, $usuarioLogueado)
     {
         if (empty($data->descripcion) || empty($data->id_cliente)) {
             http_response_code(400);
@@ -39,21 +54,21 @@ class AvisoController
         }
 
         $query = "INSERT INTO " . $this->tabla . " 
-                  (descripcion, importancia, estado, persona_contacto, telefono_contacto, id_empleado, id_cliente, id_empresa, id_usuario_creador, fecha_alta) 
-                  VALUES (:descripcion, :importancia, :estado, :persona_contacto, :telefono_contacto, :id_empleado, :id_cliente, :id_empresa, :id_usuario_creador, NOW())";
+                  (descripcion, importancia, estado, persona_contacto, telefono_contacto, 
+                   id_empleado, id_cliente, id_empresa, id_usuario_creador, fecha_alta) 
+                  VALUES (:descripcion, :importancia, :estado, :persona_contacto, :telefono_contacto, 
+                          :id_empleado, :id_cliente, :id_empresa, :id_usuario_creador, NOW())";
 
         $stmt = $this->conn->prepare($query);
 
+        // Valores por defecto
         $importancia = !empty($data->importancia) ? $data->importancia : 'Normal';
         $estado = !empty($data->estado) ? $data->estado : 'Pendiente';
         $persona_contacto = !empty($data->persona_contacto) ? $data->persona_contacto : null;
         $telefono_contacto = !empty($data->telefono_contacto) ? $data->telefono_contacto : null;
         $id_empleado = !empty($data->id_empleado) ? $data->id_empleado : null;
-        $id_empresa = !empty($data->id_empresa) ? $data->id_empresa : 1;
 
-     
-        $id_usuario_creador = 1;
-
+        // BIND DE DATOS DEL FORMULARIO
         $stmt->bindParam(":descripcion", $data->descripcion);
         $stmt->bindParam(":importancia", $importancia);
         $stmt->bindParam(":estado", $estado);
@@ -61,23 +76,15 @@ class AvisoController
         $stmt->bindParam(":telefono_contacto", $telefono_contacto);
         $stmt->bindParam(":id_empleado", $id_empleado);
         $stmt->bindParam(":id_cliente", $data->id_cliente);
-        $stmt->bindParam(":id_empresa", $id_empresa);
-        $stmt->bindParam(":id_usuario_creador", $id_usuario_creador); // Vinculamos el dato
+
+        // BIND DE DATOS DEL TOKEN 
+        $stmt->bindParam(":id_empresa", $usuarioLogueado->id_empresa);
+        $stmt->bindParam(":id_usuario_creador", $usuarioLogueado->id_usuario);
 
         try {
             if ($stmt->execute()) {
-                $id_insertado = $this->conn->lastInsertId();
-
-                $query_get = "SELECT * FROM " . $this->tabla . " WHERE id_tarea = :id";
-                $stmt_get = $this->conn->prepare($query_get);
-                $stmt_get->bindParam(":id", $id_insertado);
-                $stmt_get->execute();
-
                 http_response_code(201);
-                echo json_encode([
-                    "mensaje" => "Aviso creado con éxito",
-                    "aviso" => $stmt_get->fetch(PDO::FETCH_ASSOC)
-                ]);
+                echo json_encode(["mensaje" => "Aviso creado con éxito", "id" => $this->conn->lastInsertId()]);
             }
         } catch (PDOException $e) {
             http_response_code(400);
@@ -85,24 +92,25 @@ class AvisoController
         }
     }
 
-    //ACTUALIZAR AVISOS
-    public function update($id, $data)
+    // ACTUALIZAR AVISOS 
+    public function update($id, $data, $usuarioLogueado)
     {
-        //Datos actuales
-        $query_get = "SELECT * FROM " . $this->tabla . " WHERE id_tarea= :id";
-        $stmt_get = $this->conn->prepare($query_get);
-        $stmt_get->bindParam(":id", $id);
-        $stmt_get->execute();
+        // Verificar que el aviso existe y pertenece a la empresa
+        $query_check = "SELECT * FROM " . $this->tabla . " WHERE id_tarea = :id AND id_empresa = :id_empresa";
+        $stmt_check = $this->conn->prepare($query_check);
+        $stmt_check->bindParam(":id", $id);
+        $stmt_check->bindParam(":id_empresa", $usuarioLogueado->id_empresa);
+        $stmt_check->execute();
 
-        if ($stmt_get->rowCount() == 0) {
+        if ($stmt_check->rowCount() == 0) {
             http_response_code(404);
-            echo json_encode(["error" => "Aviso no encontrado."]);
+            echo json_encode(["error" => "Aviso no encontrado o no pertenece a su empresa."]);
             return;
         }
 
-        $actual = $stmt_get->fetch(PDO::FETCH_ASSOC);
+        $actual = $stmt_check->fetch(PDO::FETCH_ASSOC);
 
-        // Combinar los datos actuales con los nuevos (si existen)
+        // Lógica de combinación de datos 
         $descripcion = isset($data->descripcion) ? $data->descripcion : $actual['descripcion'];
         $importancia = isset($data->importancia) ? $data->importancia : $actual['importancia'];
         $estado = isset($data->estado) ? $data->estado : $actual['estado'];
@@ -111,18 +119,19 @@ class AvisoController
         $id_empleado = property_exists($data, 'id_empleado') ? $data->id_empleado : $actual['id_empleado'];
         $id_cliente = isset($data->id_cliente) ? $data->id_cliente : $actual['id_cliente'];
 
-        // Controlar la fecha de finalización si cambia el estado
+        // Control de fecha de fin
         $fecha_fin = $actual['fecha_fin'];
         if (($estado === 'Finalizada' || $estado === 'Cancelada') && empty($fecha_fin)) {
             $fecha_fin = date('Y-m-d H:i:s');
         } elseif ($estado !== 'Finalizada' && $estado !== 'Cancelada') {
             $fecha_fin = null;
         }
+
         $query = "UPDATE " . $this->tabla . " 
                   SET descripcion=:descripcion, importancia=:importancia, estado=:estado, 
                       persona_contacto=:persona_contacto, telefono_contacto=:telefono_contacto, 
                       id_empleado=:id_empleado, id_cliente=:id_cliente, fecha_fin=:fecha_fin 
-                  WHERE id_tarea = :id";
+                  WHERE id_tarea = :id AND id_empresa = :id_empresa";
 
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(":descripcion", $descripcion);
@@ -134,21 +143,27 @@ class AvisoController
         $stmt->bindParam(":id_cliente", $id_cliente);
         $stmt->bindParam(":fecha_fin", $fecha_fin);
         $stmt->bindParam(":id", $id);
+        $stmt->bindParam(":id_empresa", $usuarioLogueado->id_empresa);
 
-        if ($stmt->execute()) {
-            http_response_code(200);
-            echo json_encode(["mensaje" => "Aviso actualizado"]);
-        } else {
+
+        try {
+            if ($stmt->execute()) {
+                http_response_code(200);
+                echo json_encode(["mensaje" => "Aviso actualizado"]);
+            }
+        } catch (PDOException $e) {
             http_response_code(400);
-            echo json_encode(["error" => "No se pudo actualizar el aviso."]);
+            echo json_encode(["error" => "Error SQL al actualizar: " . $e->getMessage()]);
         }
     }
-    // ELIMINAR UN AVISO
-    public function delete($id)
+
+    // ELIMINAR UN AVISO 
+    public function delete($id, $usuarioLogueado)
     {
-        $query = "DELETE FROM " . $this->tabla . " WHERE id_tarea = :id";
+        $query = "DELETE FROM " . $this->tabla . " WHERE id_tarea = :id AND id_empresa = :id_empresa";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(":id", $id);
+        $stmt->bindParam(":id_empresa", $usuarioLogueado->id_empresa);
 
         if ($stmt->execute()) {
             http_response_code(200);

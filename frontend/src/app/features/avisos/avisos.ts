@@ -1,10 +1,12 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router,ActivatedRoute} from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 
 import { TareasService } from '../../core/services/avisos.service';
 import { ClientesService } from '../../core/services/clientes.service';
+import { AdminService } from '../../core/services/admin.service';
+import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-avisos',
@@ -13,18 +15,21 @@ import { ClientesService } from '../../core/services/clientes.service';
 })
 export default class Avisos implements OnInit {
   public tareasService = inject(TareasService);
-  public clientesService=inject(ClientesService);
+  public clientesService = inject(ClientesService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private fb = inject(FormBuilder);
 
   public mostrarFormulario = signal(false);
-  public idAvisoEditando = signal<number | null>(null); // Control de edición
+  public idAvisoEditando = signal<number | null>(null);
+  public adminService = inject(AdminService);
+  public authService = inject(AuthService);
 
   public avisoForm = this.fb.group({
     descripcion: ['', [Validators.required, Validators.minLength(5)]],
     importancia: ['Normal', [Validators.required]],
-    id_cliente: [null as number | null, [Validators.required]], // <-- ¡NUEVO CAMPO! Obligatorio
+    estado: ['Pendiente'],
+    id_cliente: [null as number | null, [Validators.required]],
     persona_contacto: [''],
     telefono_contacto: [''],
     id_empleado: [null],
@@ -37,6 +42,11 @@ export default class Avisos implements OnInit {
 
     //Cargar los clientes
     this.clientesService.cargarClientes();
+
+    //Carga a los empleados
+    if (this.authService.usuarioActual()?.rol_nombre !== 'Técnico') {
+      this.adminService.cargarEmpleados();
+    }
 
     this.route.queryParams.subscribe(params => {
       if (params['cliente_id']) {
@@ -70,6 +80,29 @@ export default class Avisos implements OnInit {
     }
   }
 
+  get avisosFiltrados() {
+    const usuario = this.authService.usuarioActual();
+
+    // Si no hay usuario o no tiene rol, no ve nada
+    if (!usuario || !usuario.rol_nombre) return [];
+
+    const todosLosAvisos = this.tareasService.tareas();
+
+    // Administrador y Atención al Cliente ven todos
+    if (usuario.rol_nombre === 'Administrador' || usuario.rol_nombre === 'Atención al Cliente') {
+      return todosLosAvisos;
+    }
+
+    // Técnico solo ve los suyos y los no asignados
+    if (usuario.rol_nombre === 'Técnico') {
+      return todosLosAvisos.filter(aviso =>
+        aviso.id_empleado === usuario.id_empleado || aviso.id_empleado === null
+      );
+    }
+
+    return [];
+  }
+
   async guardarAviso() {
     if (this.avisoForm.invalid) return;
 
@@ -93,8 +126,10 @@ export default class Avisos implements OnInit {
   }
 
   cogerAviso(idTarea: number) {
-    const idEmpleadoActual = 5;//BORRAR ESTO ES UNA SIMULACION
-    this.tareasService.asignarTarea(idTarea, idEmpleadoActual);
+    const usuario = this.authService.usuarioActual();
+    if (usuario && usuario.id_empleado) {
+      this.tareasService.asignarTarea(idTarea, usuario.id_empleado);
+    }
   }
 
   irACrearAlbaran(idTarea: number) {

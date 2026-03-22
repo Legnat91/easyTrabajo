@@ -8,7 +8,7 @@ header("Content-Type: application/json; charset=UTF-8");
 //  Requerimos la base de datos con ruta absoluta
 require_once __DIR__ . '/../config/database.php';
 
-// Instanciamos (Aquí es donde daba el error)
+// Instanciamos 
 $db = new Database();
 $conexion = $db->getConnection();
 

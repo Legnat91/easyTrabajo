@@ -29,7 +29,11 @@ CREATE TABLE cliente(
     contacto VARCHAR(20),
     email VARCHAR(100),
     cuota BOOLEAN NOT NULL DEFAULT FALSE,
-    activo BOOLEAN NOT NULL DEFAULT TRUE
+    activo BOOLEAN NOT NULL DEFAULT TRUE,
+    id_empresa INT,
+    CONSTRAINT fk_cliente_empresa
+        FOREIGN KEY (id_empresa)
+        REFERENCES empresa(id_empresa)
 );
 
 CREATE TABLE departamento(
@@ -60,7 +64,7 @@ CREATE TABLE empleado(
         REFERENCES departamento(id_departamento),
     CONSTRAINT fk_empleado_empresa
         FOREIGN KEY (id_empresa)
-        REFERENCES empresa(id_empresa);
+        REFERENCES empresa(id_empresa)
 );
 
 CREATE TABLE usuario(
@@ -142,3 +146,19 @@ INSERT INTO rol (nombre) VALUES
 ('Técnico'),
 ('Atención al Cliente');
 
+INSERT INTO empresa (id_empresa, nombre, activo)
+VALUES (1, 'Empresa Demo', 1);
+
+INSERT INTO usuario (id_usuario, nombre, email, password_hash, activo, id_empresa, id_empleado)
+VALUES (
+  1,
+  'Profesor',
+  'profesor@easyparte.es',
+  '$2y$10$m54YJGGrnSEMl5KRoyrBEe.WBbLNDoFAHk7J0zjGm2g1ToGIdPWOm',
+  1,
+  1,
+  NULL
+);
+
+INSERT INTO usuario_rol (id_usuario, id_rol)
+VALUES (1, 1);

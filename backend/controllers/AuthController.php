@@ -1,50 +1,54 @@
 <?php
+
+require_once __DIR__ . '/../helpers/jwt.php';
+require_once __DIR__ . '/../models/Usuario.php';
+
 class AuthController {
-    private $conn;
-    private $tabla = "usuario";
+    private $usuarioModel;
 
     public function __construct($db) {
-        $this->conn = $db;
+        $this->usuarioModel = new Usuario($db);
     }
 
     public function login($data) {
-        // Comprobamos que nos envíen email y password
         if (empty($data->email) || empty($data->password)) {
             http_response_code(400);
             echo json_encode(["error" => "Email y contraseña son obligatorios."]);
             return;
         }
 
-        // Buscamos al usuario por su email
-        $query = "SELECT id_usuario, nombre, email, password_hash, id_empresa, id_empleado 
-                  FROM " . $this->tabla . " 
-                  WHERE email = :email AND activo = 1 LIMIT 1";
+        $usuario = $this->usuarioModel->getByEmailActivo($data->email);
 
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(":email", $data->email);
-        $stmt->execute();
-
-        if ($stmt->rowCount() > 0) {
-            $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
-
-            // Comprobamos la contraseña
-            if (password_verify($data->password, $usuario['password_hash'])) {
-                http_response_code(200);
-                unset($usuario['password_hash']); // Quitamos el password por seguridad
-                
-                echo json_encode([
-                    "mensaje" => "Login correcto",
-                    "token" => "token_real_generado_por_php_123456",
-                    "usuario" => $usuario
-                ]);
-            } else {
-                http_response_code(401);
-                echo json_encode(["error" => "Credenciales incorrectas."]);
-            }
-        } else {
+        if (!$usuario) {
             http_response_code(401);
             echo json_encode(["error" => "Credenciales incorrectas."]);
+            return;
         }
+
+        if (!password_verify($data->password, $usuario['password_hash'])) {
+            http_response_code(401);
+            echo json_encode(["error" => "Credenciales incorrectas."]);
+            return;
+        }
+
+        $payload = [
+            "id_usuario" => $usuario['id_usuario'],
+            "id_empleado" => $usuario['id_empleado'],
+            "id_empresa" => $usuario['id_empresa'],
+            "rol_nombre" => $usuario['rol_nombre'],
+            "iat" => time(),
+            "exp" => time() + (60 * 60 * 8)
+        ];
+
+        $jwt_token = JWT::encode($payload);
+
+        unset($usuario['password_hash']);
+
+        http_response_code(200);
+        echo json_encode([
+            "mensaje" => "Login correcto",
+            "token" => $jwt_token,
+            "usuario" => $usuario
+        ]);
     }
 }
-?>

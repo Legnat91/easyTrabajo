@@ -11,13 +11,11 @@ export class Navbar {
   // Señales de la interfaz
   public menuAbierto = signal(false);
   public perfilAbierto = signal(false); // <-- Para el desplegable del PC
+
+  // Inyectamos el servicio
   public authService = inject(AuthService);
-  // Simulamos un usuario logueado (Próximamente vendrá del AuthService)
-  public usuarioActual = signal({
-    id: 5,
-    nombre: 'Juan Pérez',
-    rol: 'Administrador'
-  });
+
+  public usuarioActual = this.authService.usuarioActual;
 
   // Funciones para el menú móvil
   toggleMenu() {
@@ -37,6 +35,7 @@ export class Navbar {
   cerrarPerfil() {
     this.perfilAbierto.set(false);
   }
+
   cerrarSesion() {
     this.authService.logout();
     this.perfilAbierto.set(false);

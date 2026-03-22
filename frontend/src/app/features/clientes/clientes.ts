@@ -3,6 +3,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { ClientesService } from '../../core/services/clientes.service';
+import { AuthService } from '../../core/services/auth.service';
 
 
 
@@ -20,6 +21,8 @@ export default class Clientes implements OnInit {
   public mostrarFormulario = signal(false);
   //Si tiene un ID, estamos editando. Si es null, estamos creando.
   public idClienteEditando = signal<number | null>(null);
+  public authService = inject(AuthService);
+
   // El Molde del formulario de cliente
   public clienteForm = this.fb.group({
     nif: ['', [Validators.required, Validators.minLength(9), Validators.maxLength(9)]], // El NIF español tiene 9 letras/números
