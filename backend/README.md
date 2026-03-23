@@ -40,15 +40,15 @@ El backend de easyTrabajo está desarrollado en PHP siguiendo una estructura mod
 
 El sistema utiliza JSON Web Tokens (JWT) para proteger las rutas privadas.
 Las peticiones autenticadas deben incluir el token en la cabecera:
-
-    Authorization: Bearer <token>
- 
+```bash
+Authorization: Bearer <token>
+```
 ## Base de datos
 
 La configuración de la base de datos se encuentra en:
-
-    config/database.php
-
+```bash
+config/database.php
+```
 Asegúrate de configurar correctamente:
 
 * Host
@@ -62,7 +62,7 @@ Asegúrate de configurar correctamente:
 ## Ejecución
 
 El backend puede ejecutarse en un servidor Apache o similar apuntando a:
-
-    backend/public/
-
+```bash
+backend/public/
+```
 También puedes usar un servidor local tipo XAMPP, Laragon o similar.

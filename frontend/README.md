@@ -51,12 +51,14 @@ Se utiliza un AuthGuard para proteger las rutas privadas, evitando el acceso sin
 
 * Instalar dependencias:
 
+```bash
     npm install
-
+```
 * Ejecutar la aplicación:
-
+```bash
     ng serve
-
+```
 * Acceder en el navegador:
-
+```bash
     http://localhost:4200
+```

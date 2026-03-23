@@ -86,7 +86,7 @@ Para ejecutar este proyecto en tu máquina local, necesitas tener instalado **No
 1. Clona este repositorio dentro de la carpeta `htdocs` de XAMPP. La ruta debería quedar así: `C:/xampp/htdocs/easyTrabajo`.
 2. Inicia los servicios de **Apache** y **MySQL** en el panel de control de XAMPP.
 3. Abre phpMyAdmin (`http://localhost/phpmyadmin`) y crea una base de datos vacía.
-        Importar el archivo `easyParte.sql` esto creará automáticamente:
+        Importar el archivo `easyParte.sql` esto creará automáticamente, actualmente esta sobreestimado para futuras actualizaciones:
                 - Estructura de la base de datos
                 - Roles del sistema
                 - Empresa de prueba
@@ -95,15 +95,17 @@ Para ejecutar este proyecto en tu máquina local, necesitas tener instalado **No
 ### 2. Preparar el Frontend (Angular)
 1. Abre una terminal en la carpeta `/frontend` del proyecto.
 2. Instala las dependencias:
-   
-   npm install
-
+```bash
+npm install
+```
 3. Levanta el servidor de desarrollo de Angular:
-
+```bash
   ng serve
-
-4. Abre tu navegador y navega a http://localhost:4200.
-
+```
+4. Abre tu navegador y navega a 
+```bash
+http://localhost:4200.
+```
   Estado del Proyecto (Roadmap)
   [x] Arquitectura base y Front Controller (PHP).
 
