@@ -88,17 +88,16 @@ Para ejecutar este proyecto en tu máquina local, necesitas tener instalado **No
 3. Crear la base de datos:
 
   **Opción 1** 
-    - Abre phpMyAdmin (`http://localhost/phpmyadmin`) y crea una base de datos vacía.
-    - Importar el archivo `easyParte.sql` esto creará automáticamente, actualmente está sobredimensionado para futuras actualizaciones:
-  
-      - Estructura de la base de datos
-      - Roles del sistema
-      - Empresa de prueba
-      - Usuario administrador inicial
+- Abre phpMyAdmin (`http://localhost/phpmyadmin`) y crea una base de datos vacía.
+- Importar el archivo `easyParte.sql` esto creará automáticamente, actualmente está sobredimensionado para futuras actualizaciones:
+  - Estructura de la base de datos
+  - Roles del sistema
+  - Empresa de prueba
+  - Usuario administrador inicial
   
   **Opción 2**
-    - Copiar la carpeta `easyparte` de `bbdd`en la ruta `C:\xampp\mysql\data`.
-    - Esto nos creara una base de datos ejemplo, con un usuario `profesor@easyparte.es`con una contraseña `1234`.
+- Copiar la carpeta `easyparte` de `bbdd`en la ruta `C:\xampp\mysql\data`.
+- Esto nos creara una base de datos ejemplo, con un usuario `profesor@easyparte.es`con una contraseña `1234`.
 
 ### 2. Preparar el Frontend (Angular)
 1. Abre una terminal en la carpeta `/frontend` del proyecto.
