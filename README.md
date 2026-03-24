@@ -33,7 +33,7 @@ El objetivo es centralizar la gestión de usuarios, clientes y avisos, aplicando
 
 - **Gestiónn de avisos**: 
   - Listado dinámico con actualizaciones en tiempo real (Signals).
-  - Alta de avisos y modificacioes.
+  - Alta de avisos y modificaciones.
   - Avisos con prioridad y asignación del personal.
   - Cancelación de avisos con posibilidad de reactivar.
 
@@ -85,13 +85,20 @@ Para ejecutar este proyecto en tu máquina local, necesitas tener instalado **No
 ### 1. Preparar el Backend (XAMPP)
 1. Clona este repositorio dentro de la carpeta `htdocs` de XAMPP. La ruta debería quedar así: `C:/xampp/htdocs/easyTrabajo`.
 2. Inicia los servicios de **Apache** y **MySQL** en el panel de control de XAMPP.
-3. Abre phpMyAdmin (`http://localhost/phpmyadmin`) y crea una base de datos vacía.
-  Importar el archivo `easyParte.sql` esto creará automáticamente, actualmente esta sobredimensionado para futuras actualizaciones:
+3. Crear la base de datos:
+
+  **Opción 1** 
+    - Abre phpMyAdmin (`http://localhost/phpmyadmin`) y crea una base de datos vacía.
+    - Importar el archivo `easyParte.sql` esto creará automáticamente, actualmente está sobredimensionado para futuras actualizaciones:
   
-  - Estructura de la base de datos
-  - Roles del sistema
-  - Empresa de prueba
-  - Usuario administrador inicial
+      - Estructura de la base de datos
+      - Roles del sistema
+      - Empresa de prueba
+      - Usuario administrador inicial
+  
+  **Opción 2**
+    - Copiar la carpeta `easyparte` de `bbdd`en la ruta `C:\xampp\mysql\data`.
+    - Esto nos creara una base de datos ejemplo, con un usuario `profesor@easyparte.es`con una contraseña `1234`.
 
 ### 2. Preparar el Frontend (Angular)
 1. Abre una terminal en la carpeta `/frontend` del proyecto.
@@ -118,7 +125,7 @@ http://localhost:4200.
 
   [x] Módulo de Avisos (CRUD completo).
 
-  [ ] Módulo de empleado/usuario(falta modificacion y baja).
+  [ ] Módulo de empleado/usuario(falta modificación y baja).
 
   [ ] Módulo de Albaranes (Actualmente solo simula).
 

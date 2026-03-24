@@ -32,6 +32,8 @@ class Cliente
         $stmt = $this->conn->prepare($query);
 
         $cuota = isset($data->cuota) && $data->cuota ? 1 : 0;
+        $prefijo = !empty($data->prefijo) ? '+' . ltrim((string)$data->prefijo, '+') : null;
+
 
         $stmt->bindParam(":nif", $data->nif);
         $stmt->bindParam(":nombre", $data->nombre);
@@ -51,26 +53,41 @@ class Cliente
         return [
             "id_cliente" => $this->conn->lastInsertId(),
             "nombre" => $data->nombre,
-            "nif" => $data->nif
+            "nif" => $data->nif,
+            "poblacion" => $data->poblacion,
+            "direccion" => $data->direccion,
+            "prefijo" => $prefijo,
+            "contacto" => $data->contacto,
+            "cuota" => $cuota,
+            "activo" => 1
+
         ];
     }
 
     public function update($id, $data, $idEmpresa)
     {
         $query = "UPDATE " . $this->tabla . " 
-                  SET nombre = :nombre,
-                      nif = :nif,
-                      direccion = :direccion,
-                      telefono = :telefono,
-                      email = :email
-                  WHERE id_cliente = :id AND id_empresa = :id_empresa";
+              SET nombre = :nombre,
+                  nif = :nif,
+                  poblacion = :poblacion,
+                  direccion = :direccion,
+                  prefijo = :prefijo,
+                  contacto = :contacto,
+                  cuota = :cuota
+              WHERE id_cliente = :id AND id_empresa = :id_empresa";
 
         $stmt = $this->conn->prepare($query);
+
+        $cuota = isset($data->cuota) && $data->cuota ? 1 : 0;
+        $prefijo = !empty($data->prefijo) ? '+' . ltrim((string)$data->prefijo, '+') : null;
+
         $stmt->bindParam(":nombre", $data->nombre);
         $stmt->bindParam(":nif", $data->nif);
+        $stmt->bindParam(":poblacion", $data->poblacion);
         $stmt->bindParam(":direccion", $data->direccion);
-        $stmt->bindParam(":telefono", $data->telefono);
-        $stmt->bindParam(":email", $data->email);
+        $stmt->bindParam(":prefijo", $prefijo);
+        $stmt->bindParam(":contacto", $data->contacto);
+        $stmt->bindParam(":cuota", $cuota);
         $stmt->bindParam(":id", $id);
         $stmt->bindParam(":id_empresa", $idEmpresa);
 
