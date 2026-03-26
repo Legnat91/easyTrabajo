@@ -108,6 +108,10 @@ npm install
 ```bash
 http://localhost:4200.
 ```
+### ¡¡IMPORTANTE!! 
+Si al intentar logearos y no os deja, el error puede ser el puerto de MySql de Xampp, por defecto esta el `3306`.
+Si necesitais cambiarlo id a `easyTrabajo/backend/config/database.php` y cambiar `port=3306`a vuestro puerto.
+
   Estado del Proyecto (Roadmap)
   [x] Arquitectura base y Front Controller (PHP).
 
@@ -124,6 +128,12 @@ http://localhost:4200.
   [ ] Módulo de Albaranes (Actualmente solo simula).
 
   [ ] Usar modales para mensajes de confirmación.
+
+  [ ] Mejorar seguridad.
+
+  [ ] Arreglar errores.
+
+  [ ] Refactorización del codigo.
 
   ## Autor
 

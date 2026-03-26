@@ -12,7 +12,7 @@ class Database {
     public function getConnection() {
         $this->conn = null;
         try {
-            $this->conn = new PDO("mysql:host=" . $this->host . ";dbname=" . $this->db_name . ";charset=utf8", $this->username, $this->password);
+            $this->conn = new PDO("mysql:host=" . $this->host . ";port=3306;dbname=" . $this->db_name . ";charset=utf8", $this->username, $this->password);
             // Le decimos a PDO que si hay un error lance una Excepción
 
             $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
