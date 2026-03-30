@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 25-03-2026 a las 18:10:34
+-- Tiempo de generación: 26-03-2026 a las 20:28:15
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -48,8 +48,9 @@ CREATE TABLE `cliente` (
 INSERT INTO `cliente` (`id_cliente`, `nif`, `nombre`, `poblacion`, `direccion`, `prefijo`, `contacto`, `email`, `id_empresa`, `cuota`, `activo`) VALUES
 (10, 'xxxxxxxxx', 'Clientes Varios', 'Prueba', 'Calle Prueba', '34', NULL, NULL, 1, 0, 1),
 (14, 'b10508929', 'Empresa Prueba, S.L.', 'Prueba', 'Calle Prueba', '34', NULL, NULL, 1, 1, 1),
-(15, 'B10102145', 'Prueba2', 'Prueba', 'Calle Prueba', '34', NULL, NULL, 1, 1, 1),
-(16, 'B12342132', 'Prueba3', 'prueba', 'Calle ', '34', NULL, NULL, 1, 1, 0);
+(15, 'B10102145', 'Prueba2', 'Prueba', 'Calle Prueba', '34', NULL, NULL, 1, 1, 0),
+(16, 'B12342132', 'Prueba3', 'prueba', 'Calle ', '34', NULL, NULL, 1, 1, 0),
+(18, 'x13131313', 'Taller Prueba', 'Prueba', 'Prueba', '+34', NULL, NULL, 1, 1, 1);
 
 -- --------------------------------------------------------
 
@@ -88,7 +89,9 @@ CREATE TABLE `empleado` (
 --
 
 INSERT INTO `empleado` (`id_empleado`, `nombre`, `apellido`, `apellido_2`, `extension_tel`, `prefijo`, `movil`, `nif`, `activo`, `id_departamento`, `id_empresa`) VALUES
-(19, 'Prueba', 'Prueba', '', NULL, '+34', '', '', 1, NULL, 1);
+(19, 'Prueba', 'Prueba', '', NULL, '+34', '', '', 1, NULL, 1),
+(21, 'Beatriz', 'Gordo', '', NULL, '+34', '', '4441099c', 1, NULL, 1),
+(22, 'Juan', 'Pérez', NULL, NULL, NULL, NULL, NULL, 1, NULL, 1);
 
 -- --------------------------------------------------------
 
@@ -124,6 +127,7 @@ INSERT INTO `empresa` (`id_empresa`, `nif`, `nombre`, `prefijo`, `telefono`, `em
 
 CREATE TABLE `parte_trabajo` (
   `id_parte_trabajo` int(11) NOT NULL,
+  `id_empresa` int(11) NOT NULL,
   `descripcion` varchar(500) NOT NULL,
   `fecha_inicio` datetime NOT NULL DEFAULT current_timestamp(),
   `fecha_fin` datetime DEFAULT NULL,
@@ -134,8 +138,17 @@ CREATE TABLE `parte_trabajo` (
   `horas` decimal(5,2) DEFAULT 0.00,
   `material` text DEFAULT NULL,
   `observaciones` text DEFAULT NULL,
-  `firma_cliente` varchar(255) DEFAULT NULL
+  `firma_cliente` varchar(255) DEFAULT NULL,
+  `activo` tinyint(1) DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `parte_trabajo`
+--
+
+INSERT INTO `parte_trabajo` (`id_parte_trabajo`, `id_empresa`, `descripcion`, `fecha_inicio`, `fecha_fin`, `estado`, `id_cliente`, `id_tarea`, `id_empleado`, `horas`, `material`, `observaciones`, `firma_cliente`, `activo`) VALUES
+(1, 1, '', '2026-03-26 20:11:47', '2026-03-26 20:11:57', 'Cerrado', 10, 19, NULL, NULL, NULL, NULL, NULL, 1),
+(2, 1, 'adasdasdadasdasdasd', '2026-03-26 20:13:31', '2026-03-26 20:22:43', 'Cerrado', 10, NULL, NULL, 12.00, 'asdsadasdasd', 'sadasdasd', NULL, 1);
 
 -- --------------------------------------------------------
 
@@ -184,7 +197,9 @@ CREATE TABLE `tarea` (
 --
 
 INSERT INTO `tarea` (`id_tarea`, `descripcion`, `fecha_alta`, `fecha_fin`, `importancia`, `estado`, `persona_contacto`, `telefono_contacto`, `id_empleado`, `id_cliente`, `id_departamento`, `id_empresa`, `id_usuario_creador`) VALUES
-(18, 'Prueba aviso', '2026-03-24 12:56:54', NULL, 'Normal', 'En proceso', NULL, NULL, 19, 10, NULL, 1, 5);
+(18, 'Prueba aviso', '2026-03-24 12:56:54', '2026-03-25 19:16:46', 'Normal', 'Finalizada', NULL, NULL, 19, 10, NULL, 1, 5),
+(19, 'Existe un problema con la clonación de GitHub', '2026-03-25 19:14:50', '2026-03-26 20:11:57', 'Urgente', 'Finalizada', 'Angel', '65487931', 19, 15, NULL, 1, 9),
+(20, 'Aviso de prueba ', '2026-03-25 19:17:14', '2026-03-25 19:21:32', 'Alta', 'Cancelada', NULL, NULL, NULL, 10, NULL, 1, 12);
 
 -- --------------------------------------------------------
 
@@ -210,7 +225,8 @@ CREATE TABLE `usuario` (
 INSERT INTO `usuario` (`id_usuario`, `nombre`, `email`, `password_hash`, `activo`, `id_empresa`, `id_empleado`, `created_at`) VALUES
 (5, 'Admin', 'angel@easyparte.es', '$2y$10$lS3nUlgTuDzKEcHsTkHt8uBU1wX8CicGr0GwXoFOqM5b6POtxHXye', 1, 1, NULL, '2026-03-20 12:26:31'),
 (9, 'Profesor', 'profesor@easyparte.es', '$2y$10$m54YJGGrnSEMl5KRoyrBEe.WBbLNDoFAHk7J0zjGm2g1ToGIdPWOm', 1, 1, NULL, '2026-03-20 18:17:34'),
-(12, 'prueba', 'prueba@easyparte.es', '$2y$10$jK4QtCrM9eFsU7JUVY6g7OEhb6MrLttBiPvdw7.a9fhAVHfKtNO.e', 1, 1, 19, '2026-03-24 11:57:30');
+(12, 'prueba', 'prueba@easyparte.es', '$2y$10$jK4QtCrM9eFsU7JUVY6g7OEhb6MrLttBiPvdw7.a9fhAVHfKtNO.e', 1, 1, 19, '2026-03-24 11:57:30'),
+(13, 'Beatriz', 'prueba2@easyparte.es', '$2y$10$CB7snvEvPwZSLAzy3vktxeJ7XjjPNcFQRmgoIC/pA9y3So7tJvKKy', 1, 1, 21, '2026-03-25 18:18:28');
 
 -- --------------------------------------------------------
 
@@ -230,7 +246,8 @@ CREATE TABLE `usuario_rol` (
 INSERT INTO `usuario_rol` (`id_usuario`, `id_rol`) VALUES
 (5, 1),
 (9, 1),
-(12, 2);
+(12, 2),
+(13, 2);
 
 --
 -- Índices para tablas volcadas
@@ -274,7 +291,8 @@ ALTER TABLE `parte_trabajo`
   ADD PRIMARY KEY (`id_parte_trabajo`),
   ADD KEY `fk_parte_trabajo_cliente` (`id_cliente`),
   ADD KEY `fk_parte_trabajo_empleado` (`id_empleado`),
-  ADD KEY `fk_parte_trabajo_tarea` (`id_tarea`);
+  ADD KEY `fk_parte_trabajo_tarea` (`id_tarea`),
+  ADD KEY `fk_parte_trabajo_empresa` (`id_empresa`);
 
 --
 -- Indices de la tabla `rol`
@@ -318,7 +336,7 @@ ALTER TABLE `usuario_rol`
 -- AUTO_INCREMENT de la tabla `cliente`
 --
 ALTER TABLE `cliente`
-  MODIFY `id_cliente` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `id_cliente` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT de la tabla `departamento`
@@ -330,7 +348,7 @@ ALTER TABLE `departamento`
 -- AUTO_INCREMENT de la tabla `empleado`
 --
 ALTER TABLE `empleado`
-  MODIFY `id_empleado` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `id_empleado` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
 -- AUTO_INCREMENT de la tabla `empresa`
@@ -342,7 +360,7 @@ ALTER TABLE `empresa`
 -- AUTO_INCREMENT de la tabla `parte_trabajo`
 --
 ALTER TABLE `parte_trabajo`
-  MODIFY `id_parte_trabajo` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_parte_trabajo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `rol`
@@ -354,13 +372,13 @@ ALTER TABLE `rol`
 -- AUTO_INCREMENT de la tabla `tarea`
 --
 ALTER TABLE `tarea`
-  MODIFY `id_tarea` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id_tarea` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT de la tabla `usuario`
 --
 ALTER TABLE `usuario`
-  MODIFY `id_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- Restricciones para tablas volcadas
@@ -391,6 +409,7 @@ ALTER TABLE `empleado`
 ALTER TABLE `parte_trabajo`
   ADD CONSTRAINT `fk_parte_trabajo_cliente` FOREIGN KEY (`id_cliente`) REFERENCES `cliente` (`id_cliente`),
   ADD CONSTRAINT `fk_parte_trabajo_empleado` FOREIGN KEY (`id_empleado`) REFERENCES `empleado` (`id_empleado`),
+  ADD CONSTRAINT `fk_parte_trabajo_empresa` FOREIGN KEY (`id_empresa`) REFERENCES `empresa` (`id_empresa`),
   ADD CONSTRAINT `fk_parte_trabajo_tarea` FOREIGN KEY (`id_tarea`) REFERENCES `tarea` (`id_tarea`);
 
 --

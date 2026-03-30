@@ -4,7 +4,8 @@ import { Router } from '@angular/router';
 
 import { ClientesService } from '../../core/services/clientes.service';
 import { AuthService } from '../../core/services/auth.service';
-
+import { AlertService } from '../../core/services/alert.service';
+import { TareasService } from '../../core/services/avisos.service';
 
 
 @Component({
@@ -22,6 +23,7 @@ export default class Clientes implements OnInit {
   //Si tiene un ID, estamos editando. Si es null, estamos creando.
   public idClienteEditando = signal<number | null>(null);
   public authService = inject(AuthService);
+  public alertService = inject(AlertService);
 
   // El Molde del formulario de cliente
   public clienteForm = this.fb.group({
@@ -65,37 +67,47 @@ export default class Clientes implements OnInit {
 
     this.mostrarFormulario.set(true);
   }
-  async guardarCliente() {
-    if (this.clienteForm.invalid) return;
+ async guardarCliente() {
+  if (this.clienteForm.invalid) return;
 
-    // Le pasamos los datos al servicio y le ponemos un "await"
-    let exito = false;
-    const datos = this.clienteForm.value;
+  const datosFormulario = this.clienteForm.value;
 
-    if (this.idClienteEditando()) {
-      // MODO EDICIÓN
-      exito = await this.clientesService.actualizarCliente(this.idClienteEditando()!, datos);
-    } else {
-      // MODO CREACIÓN
-      exito = await this.clientesService.agregarCliente(datos as any);
-    }
+  const datosParaGuardar = {
+    ...datosFormulario,
+    cuota: datosFormulario.cuota ? 1 : 0
+  };
 
-    // Cerramos el panel SOLO si se ha guardado bien en la base de datos
-    if (exito) {
-      this.toggleFormulario();
-    } else {
-      alert("Hubo un error al guardar en el servidor");
-    }
+  let exito = false;
+
+  if (this.idClienteEditando()) {
+    exito = await this.clientesService.actualizarCliente(this.idClienteEditando()!, datosParaGuardar as any);
+  } else {
+    exito = await this.clientesService.agregarCliente(datosParaGuardar as any);
   }
-  async borrarCliente(id: number) {
-    // Pedimos confirmación al usuario por seguridad
-    if (confirm('¿Estás seguro de que deseas eliminar este cliente?')) {
-      const exito = await this.clientesService.eliminarCliente(id);
-      if (!exito) {
-        alert("Error al intentar eliminar el cliente.");
+
+  if (exito) {
+    this.toggleFormulario();
+    this.alertService.mostrar('¡Guardado!', 'El cliente se ha guardado correctamente.', 'success');
+  } else {
+    this.alertService.mostrar('Error', 'Hubo un error al guardar el cliente en el servidor.', 'error');
+  }
+}
+  borrarCliente(id: number) {
+    this.alertService.confirmar(
+      '¿Dar de baja al cliente?',
+      '¿Estás seguro que quieres dar de baja al cliente? No podrás deshacer esta acción.',
+      async () => {
+
+        const exito = await this.clientesService.eliminarCliente(id);
+        if (exito) {
+          this.alertService.mostrar('Eliminado', 'El cliente ha sido dado de baja con éxito.', 'info');
+        } else {
+          this.alertService.mostrar('Error', 'No se pudo dar de baja al cliente. Revisa tu conexión.', 'error');
+        }
       }
-    }
+    );
   }
+
   irACrearAviso(idCliente: number) {
     this.router.navigate(['/avisos'], { queryParams: { cliente_id: idCliente } });
   }

@@ -109,7 +109,7 @@
               }
             </td>
             <td class="px-6 py-4 text-center">
-              @if(cliente.cuota) {
+              @if(+cliente.cuota === 1) {
               <span
                 class="bg-green-100 text-green-800 text-xs font-bold px-2.5 py-1 rounded border border-green-200">ACTIVA</span>
               } @else {

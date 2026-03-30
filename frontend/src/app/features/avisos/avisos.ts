@@ -7,6 +7,7 @@ import { TareasService } from '../../core/services/avisos.service';
 import { ClientesService } from '../../core/services/clientes.service';
 import { AdminService } from '../../core/services/admin.service';
 import { AuthService } from '../../core/services/auth.service';
+import { AlertService } from '../../core/services/alert.service';
 
 @Component({
   selector: 'app-avisos',
@@ -24,6 +25,7 @@ export default class Avisos implements OnInit {
   public idAvisoEditando = signal<number | null>(null);
   public adminService = inject(AdminService);
   public authService = inject(AuthService);
+  public alertService = inject(AlertService);
 
   public avisoForm = this.fb.group({
     descripcion: ['', [Validators.required, Validators.minLength(5)]],
@@ -120,8 +122,10 @@ export default class Avisos implements OnInit {
 
     if (exito) {
       this.toggleFormulario();
+      this.alertService.mostrar('¡Guardado!', 'El aviso se ha guardado correctamente.', 'success');
     } else {
-      alert("Hubo un error al guardar el aviso.");
+      // alert("Hubo un error al guardar el aviso.");
+      this.alertService.mostrar('Error', 'Hubo un error al guardar el aviso en el servidor.', 'error');
     }
   }
 
@@ -137,9 +141,17 @@ export default class Avisos implements OnInit {
   }
 
   cancelarAviso(idTarea: number) {
-    if (confirm('¿Estás seguro de cancelar este aviso?')) {
-      this.tareasService.cancelarTarea(idTarea);
-    }
+    // if (confirm('¿Estás seguro de cancelar este aviso?')) {
+    //   this.tareasService.cancelarTarea(idTarea);
+    // }
+    this.alertService.confirmar(
+      '¿Cancelar Aviso?',
+      '¿Estás seguro de que deseas cancelar este aviso?.',
+      () => {
 
+        this.tareasService.cancelarTarea(idTarea);
+        this.alertService.mostrar('Cancelado', 'El aviso ha sido cancelado.', 'info');
+      }
+    );
   }
 }
