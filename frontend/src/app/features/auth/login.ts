@@ -14,7 +14,7 @@ export default class Login {
   private authService = inject(AuthService);
 
   public errorLogin = signal(false);
-  //IMPORTANTE quitar
+
   public loginForm = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required]]

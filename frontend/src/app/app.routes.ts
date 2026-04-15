@@ -17,6 +17,10 @@ export const routes: Routes = [
     canActivate: [authGuard],
     children: [
       {
+        path: 'dashboard',
+        loadComponent: () => import('./features/dashboard/dashboard')
+      },
+      {
         path: 'avisos',
         title: 'Avisos - EasyParte',
         loadComponent: () => import('./features/avisos/avisos')
@@ -40,7 +44,7 @@ export const routes: Routes = [
       },
       {
         path: '',
-        redirectTo: 'avisos',
+        redirectTo: '/dashboard',
         pathMatch: 'full'
       }
     ]

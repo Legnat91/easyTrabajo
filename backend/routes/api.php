@@ -35,6 +35,16 @@ if ($indice_api !== false && isset($partes_ruta[$indice_api + 1])) {
                 $clienteController->delete($id, $usuarioLogueado);
             }
             break;
+            
+        case 'dashboard':
+            $usuarioLogueado = AuthMiddleware::checkToken();
+            require_once __DIR__ . '/../controllers/DashboardController.php';
+            $dashboardController = new DashboardController($conexion);
+
+            if ($metodo === 'GET') {
+                $dashboardController->getResumen($usuarioLogueado);
+            }
+            break;
 
         case 'avisos':
             $usuarioLogueado = AuthMiddleware::checkToken();

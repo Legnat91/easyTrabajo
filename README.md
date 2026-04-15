@@ -129,9 +129,9 @@ y modificad el valor de `port=3306` por el puerto que estéis utilizando en vues
 
   [ ] Módulo de empleado/usuario(falta modificación y baja).
 
-  [ ] Módulo de Albaranes (Actualmente solo simula).
+  [x] Módulo de Albaranes.
 
-  [ ] Usar modales para mensajes de confirmación.
+  [x] Usar modales para mensajes de confirmación.
 
   [ ] Mejorar seguridad.
 

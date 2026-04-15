@@ -141,9 +141,7 @@ export default class Avisos implements OnInit {
   }
 
   cancelarAviso(idTarea: number) {
-    // if (confirm('¿Estás seguro de cancelar este aviso?')) {
-    //   this.tareasService.cancelarTarea(idTarea);
-    // }
+
     this.alertService.confirmar(
       '¿Cancelar Aviso?',
       '¿Estás seguro de que deseas cancelar este aviso?.',

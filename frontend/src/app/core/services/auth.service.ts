@@ -36,7 +36,7 @@ export class AuthService {
       sessionStorage.setItem('easyparte_token', respuesta.token);
       sessionStorage.setItem('easyparte_user', JSON.stringify(respuesta.usuario));
 
-      this.router.navigate(['/avisos']);
+      this.router.navigate(['/dashboard']);
       return true;
 
     } catch (error) {
