@@ -3,11 +3,9 @@ import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { Empleado, Rol, UsuarioAdmin } from '../interfaces/admin.interfaces';
 
-
 @Injectable({
   providedIn: 'root'
 })
-
 export class AdminService {
   private http = inject(HttpClient);
   private apiUrl = 'http://localhost/easyTrabajo/backend/public/api';
@@ -44,11 +42,56 @@ export class AdminService {
   async agregarUsuario(datos: any): Promise<boolean> {
     try {
       await firstValueFrom(this.http.post(`${this.apiUrl}/usuarios`, datos));
-
       this.cargarUsuarios();
       return true;
     } catch (error) {
       console.error("Error al guardar usuario:", error);
+      return false;
+    }
+  }
+
+  // ACTUALIZAR DATOS
+  async actualizarEmpleado(id: number, datos: any): Promise<boolean> {
+    try {
+      await firstValueFrom(this.http.put(`${this.apiUrl}/empleados/${id}`, datos));
+      this.cargarEmpleados();
+      return true;
+    } catch (error) {
+      console.error("Error al actualizar empleado:", error);
+      return false;
+    }
+  }
+
+  async actualizarUsuario(id: number, datos: any): Promise<boolean> {
+    try {
+      await firstValueFrom(this.http.put(`${this.apiUrl}/usuarios/${id}`, datos));
+      this.cargarUsuarios();
+      return true;
+    } catch (error) {
+      console.error("Error al actualizar usuario:", error);
+      return false;
+    }
+  }
+
+  // ELIMINAR DATOS (Soft Delete)
+  async eliminarEmpleado(id: number): Promise<boolean> {
+    try {
+      await firstValueFrom(this.http.delete(`${this.apiUrl}/empleados/${id}`));
+      this.cargarEmpleados();
+      return true;
+    } catch (error) {
+      console.error("Error al borrar empleado:", error);
+      return false;
+    }
+  }
+
+  async eliminarUsuario(id: number): Promise<boolean> {
+    try {
+      await firstValueFrom(this.http.delete(`${this.apiUrl}/usuarios/${id}`));
+      this.cargarUsuarios();
+      return true;
+    } catch (error) {
+      console.error("Error al borrar usuario:", error);
       return false;
     }
   }

@@ -78,7 +78,7 @@ if ($indice_api !== false && isset($partes_ruta[$indice_api + 1])) {
             } elseif ($metodo === 'POST') {
                 $datos = json_decode(file_get_contents("php://input"));
                 $parteController->create($datos, $usuarioLogueado);
-            } elseif ($metodo === 'PUT' && $id) {  // <--- AÑADE ESTA LÍNEA
+            } elseif ($metodo === 'PUT' && $id) {  
                 $datos = json_decode(file_get_contents("php://input"));
                 $parteController->update($id, $datos, $usuarioLogueado);
             }
@@ -96,6 +96,9 @@ if ($indice_api !== false && isset($partes_ruta[$indice_api + 1])) {
                 exit;
             }
 
+            // Sacamos el ID aquí para que esté disponible en empleados y usuarios
+            $id = isset($partes_ruta[$indice_api + 2]) ? $partes_ruta[$indice_api + 2] : null;
+
             if ($endpoint === 'empleados') {
                 require_once __DIR__ . '/../controllers/EmpleadoController.php';
                 $controller = new EmpleadoController($conexion);
@@ -103,6 +106,11 @@ if ($indice_api !== false && isset($partes_ruta[$indice_api + 1])) {
                 elseif ($metodo === 'POST') {
                     $datos = json_decode(file_get_contents("php://input"));
                     $controller->create($datos, $usuarioLogueado);
+                } elseif ($metodo === 'PUT' && $id) {
+                    $datos = json_decode(file_get_contents("php://input"));
+                    $controller->update($id, $datos, $usuarioLogueado);
+                } elseif ($metodo === 'DELETE' && $id) {
+                    $controller->delete($id, $usuarioLogueado);
                 }
             } elseif ($endpoint === 'usuarios') {
                 require_once __DIR__ . '/../controllers/UsuarioController.php';
@@ -111,6 +119,11 @@ if ($indice_api !== false && isset($partes_ruta[$indice_api + 1])) {
                 elseif ($metodo === 'POST') {
                     $datos = json_decode(file_get_contents("php://input"));
                     $controller->create($datos, $usuarioLogueado);
+                } elseif ($metodo === 'PUT' && $id) {
+                    $datos = json_decode(file_get_contents("php://input"));
+                    $controller->update($id, $datos, $usuarioLogueado);
+                } elseif ($metodo === 'DELETE' && $id) {
+                    $controller->delete($id, $usuarioLogueado);
                 }
             } elseif ($endpoint === 'roles') {
                 require_once __DIR__ . '/../controllers/RolController.php';

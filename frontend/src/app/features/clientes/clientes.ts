@@ -73,11 +73,12 @@ export default class Clientes implements OnInit {
   const datosFormulario = this.clienteForm.value;
 
   const datosParaGuardar = {
-    ...datosFormulario,
-    cuota: datosFormulario.cuota ? 1 : 0
-  };
+      ...datosFormulario,
+      cuota: datosFormulario.cuota ? 1 : 0
+    };
 
   let exito = false;
+
 
   if (this.idClienteEditando()) {
     exito = await this.clientesService.actualizarCliente(this.idClienteEditando()!, datosParaGuardar as any);

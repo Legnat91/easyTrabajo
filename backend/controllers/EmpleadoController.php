@@ -82,5 +82,49 @@ class EmpleadoController
             echo json_encode(["error" => "Error al guardar el empleado. Detalle: " . $e->getMessage()]);
         }
     }
+    // ACTUALIZAR EMPLEADO
+    public function update($id, $datos, $usuarioLogueado)
+    {
+        try {
+            $query = "UPDATE empleado 
+                      SET nombre = :nombre, apellido = :apellido, apellido_2 = :apellido_2, nif = :nif, movil = :movil 
+                      WHERE id_empleado = :id AND id_empresa = :id_empresa";
+
+            $stmt = $this->conn->prepare($query);
+            $stmt->execute([
+                'nombre' => $datos->nombre,
+                'apellido' => $datos->apellido,
+                'apellido_2' => $datos->apellido_2 ?? null,
+                'nif' => $datos->nif ?? null,
+                'movil' => $datos->movil ?? null,
+                'id' => $id,
+                'id_empresa' => $usuarioLogueado->id_empresa
+            ]);
+
+            http_response_code(200);
+            echo json_encode(["mensaje" => "Empleado actualizado correctamente"]);
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode(["error" => "Error al actualizar empleado: " . $e->getMessage()]);
+        }
+    }
+    // BORRAR EMPLEADO 
+    public function delete($id, $usuarioLogueado)
+    {
+        try {
+            
+            $query = "UPDATE empleado SET activo = 0 WHERE id_empleado = :id AND id_empresa = :id_empresa";
+            $stmt = $this->conn->prepare($query);
+            $stmt->execute([
+                'id' => $id,
+                'id_empresa' => $usuarioLogueado->id_empresa
+            ]);
+
+            http_response_code(200);
+            echo json_encode(["mensaje" => "Empleado dado de baja correctamente"]);
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode(["error" => "Error al dar de baja al empleado: " . $e->getMessage()]);
+        }
+    }
 }
-?>

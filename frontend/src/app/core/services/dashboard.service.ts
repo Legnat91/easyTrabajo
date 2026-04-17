@@ -7,6 +7,7 @@ export interface DashboardResumen {
   avisosPendientes: number;
   albaranesAbiertos: number;
   horasMes: number;
+  esVistaPersonal: boolean;
 }
 
 @Injectable({

@@ -11,13 +11,12 @@ class Usuario
 
     public function getByEmailActivo($email)
     {
-        $query = "SELECT u.id_usuario, u.nombre, u.email, u.id_empresa, u.id_empleado, u.password_hash,
-                         r.id_rol, r.nombre as rol_nombre
-                  FROM usuario u
-                  LEFT JOIN usuario_rol ur ON u.id_usuario = ur.id_usuario
-                  LEFT JOIN rol r ON ur.id_rol = r.id_rol
-                  WHERE u.email = :email AND u.activo = 1
-                  LIMIT 1";
+        $query = "SELECT u.*, ur.id_rol, r.nombre as rol_nombre, e.nombre as empleado_nombre 
+          FROM usuario u
+          LEFT JOIN usuario_rol ur ON u.id_usuario = ur.id_usuario
+          LEFT JOIN rol r ON ur.id_rol = r.id_rol
+          LEFT JOIN empleado e ON u.id_empleado = e.id_empleado
+          WHERE u.id_empresa = :id_empresa AND u.activo = 1";
 
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(":email", $email);
@@ -28,10 +27,14 @@ class Usuario
 
     public function getAllByEmpresa($idEmpresa)
     {
-        $query = "SELECT u.id_usuario, u.nombre, u.email, r.nombre as rol_nombre, u.activo
+        $query = "SELECT u.id_usuario, u.nombre, u.email, u.activo, u.id_empresa, u.id_empleado,
+                         ur.id_rol, 
+                         r.nombre as rol_nombre, 
+                         CONCAT(e.nombre, ' ', COALESCE(e.apellido, '')) as empleado_nombre
                   FROM usuario u
                   LEFT JOIN usuario_rol ur ON u.id_usuario = ur.id_usuario
                   LEFT JOIN rol r ON ur.id_rol = r.id_rol
+                  LEFT JOIN empleado e ON u.id_empleado = e.id_empleado
                   WHERE u.id_empresa = :id_empresa AND u.activo = 1";
 
         $stmt = $this->conn->prepare($query);
