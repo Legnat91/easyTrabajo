@@ -27,6 +27,13 @@ export default class Avisos implements OnInit {
   public authService = inject(AuthService);
   public alertService = inject(AlertService);
 
+  public textoBusqueda = signal<string>('');
+
+  actualizarBusqueda(event: Event) {
+    const input = event.target as HTMLInputElement;
+    this.textoBusqueda.set(input.value);
+  }
+
   public avisoForm = this.fb.group({
     descripcion: ['', [Validators.required, Validators.minLength(5)]],
     importancia: ['Normal', [Validators.required]],
@@ -88,21 +95,31 @@ export default class Avisos implements OnInit {
     // Si no hay usuario o no tiene rol, no ve nada
     if (!usuario || !usuario.rol_nombre) return [];
 
-    const todosLosAvisos = this.tareasService.tareas();
+    let avisos = this.tareasService.tareas();
 
     // Administrador y Atención al Cliente ven todos
     if (usuario.rol_nombre === 'Administrador' || usuario.rol_nombre === 'Atención al Cliente') {
-      return todosLosAvisos;
+      // Mantienen la lista completa.
     }
 
     // Técnico solo ve los suyos y los no asignados
-    if (usuario.rol_nombre === 'Técnico') {
-      return todosLosAvisos.filter(aviso =>
+    else if (usuario.rol_nombre === 'Técnico') {
+      avisos = avisos.filter(aviso =>
         aviso.id_empleado === usuario.id_empleado || aviso.id_empleado === null
       );
+    } else {
+      return [];
     }
 
-    return [];
+    const busqueda = this.textoBusqueda().toLowerCase().trim();
+    if (!busqueda) return avisos;
+
+    return avisos.filter(aviso =>
+      aviso.descripcion?.toLowerCase().includes(busqueda) ||
+      aviso.cliente_nombre?.toLowerCase().includes(busqueda) ||
+      aviso.estado?.toLowerCase().includes(busqueda) ||
+      aviso.tecnico_nombre?.toLowerCase().includes(busqueda)
+    );
   }
 
   async guardarAviso() {

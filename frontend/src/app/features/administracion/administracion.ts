@@ -16,6 +16,8 @@ export default class Administracion implements OnInit {
   // Control de interfaz
   public pestanaActiva = signal<'empleados' | 'usuarios'>('empleados');
   public mostrarFormulario = signal(false);
+  public textoBusquedaEmpleados = signal<string>('');
+  public textoBusquedaUsuarios = signal<string>('');
 
   // Variables para saber si estamos editando
   public idEmpleadoEditando = signal<number | null>(null);
@@ -45,6 +47,47 @@ export default class Administracion implements OnInit {
     this.adminService.cargarRoles();
     this.adminService.cargarEmpleados();
     this.adminService.cargarUsuarios();
+  }
+
+  actualizarBusquedaEmpleados(event: Event) {
+    const input = event.target as HTMLInputElement;
+    this.textoBusquedaEmpleados.set(input.value);
+  }
+
+  actualizarBusquedaUsuarios(event: Event) {
+    const input = event.target as HTMLInputElement;
+    this.textoBusquedaUsuarios.set(input.value);
+  }
+
+  get empleadosFiltrados() {
+    const busqueda = this.textoBusquedaEmpleados().toLowerCase().trim();
+    const empleados = this.adminService.empleados();
+
+    if (!busqueda) return empleados;
+
+    return empleados.filter(empleado =>
+      empleado.nombre?.toLowerCase().includes(busqueda) ||
+      empleado.apellido?.toLowerCase().includes(busqueda) ||
+      empleado.apellido_2?.toLowerCase().includes(busqueda) ||
+      empleado.nif?.toLowerCase().includes(busqueda) ||
+      empleado.movil?.toLowerCase().includes(busqueda) ||
+      empleado.id_empleado?.toString().includes(busqueda)
+    );
+  }
+
+  get usuariosFiltrados() {
+    const busqueda = this.textoBusquedaUsuarios().toLowerCase().trim();
+    const usuarios = this.adminService.usuarios();
+
+    if (!busqueda) return usuarios;
+
+    return usuarios.filter(usuario =>
+      usuario.nombre?.toLowerCase().includes(busqueda) ||
+      usuario.email?.toLowerCase().includes(busqueda) ||
+      usuario.rol_nombre?.toLowerCase().includes(busqueda) ||
+      usuario.empleado_nombre?.toLowerCase().includes(busqueda) ||
+      usuario.id_usuario?.toString().includes(busqueda)
+    );
   }
 
   cambiarPestana(pestana: 'empleados' | 'usuarios') {

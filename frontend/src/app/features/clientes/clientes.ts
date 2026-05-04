@@ -1,11 +1,10 @@
-import { Component, inject, signal, OnInit } from '@angular/core';
+import { Component, inject, signal, OnInit, computed } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { ClientesService } from '../../core/services/clientes.service';
 import { AuthService } from '../../core/services/auth.service';
 import { AlertService } from '../../core/services/alert.service';
-import { TareasService } from '../../core/services/avisos.service';
 
 
 @Component({
@@ -17,6 +16,35 @@ export default class Clientes implements OnInit {
   public clientesService = inject(ClientesService);
   private fb = inject(FormBuilder);
   private router = inject(Router);
+
+  //Buscador
+  public textoBusqueda = signal<string>('');
+  public clientesFiltrados = computed(() => {
+    const busqueda = this.textoBusqueda().toLowerCase().trim();
+    const lista = this.clientesService.clientes();
+
+    //Se devuelve todo si es vacio
+    if (!busqueda) {
+      return lista;
+    }
+
+    return lista.filter(cliente =>
+      cliente.nombre?.toLowerCase().includes(busqueda) ||
+      cliente.nif?.toLowerCase().includes(busqueda) ||
+      cliente.poblacion?.toLowerCase().includes(busqueda) ||
+      cliente.direccion?.toLowerCase().includes(busqueda) ||
+      cliente.email?.toLowerCase().includes(busqueda) ||
+      cliente.contacto?.toString().includes(busqueda) ||
+      cliente.prefijo?.toString().includes(busqueda) ||
+      cliente.id_cliente?.toString().includes(busqueda) ||
+      (cliente.cuota === 1 ? 'activa' : 'no').includes(busqueda)
+    );
+  })
+  //Para que se actualice mientras tecleamos
+  actualizarBusqueda(event: Event) {
+    const input = event.target as HTMLInputElement;
+    this.textoBusqueda.set(input.value);
+  }
 
   // Señal para controlar si se ve la cajita del formulario
   public mostrarFormulario = signal(false);

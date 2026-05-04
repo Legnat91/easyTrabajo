@@ -16,7 +16,7 @@ class Usuario
           LEFT JOIN usuario_rol ur ON u.id_usuario = ur.id_usuario
           LEFT JOIN rol r ON ur.id_rol = r.id_rol
           LEFT JOIN empleado e ON u.id_empleado = e.id_empleado
-          WHERE u.id_empresa = :id_empresa AND u.activo = 1";
+          WHERE u.email = :email AND u.activo = 1";
 
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(":email", $email);

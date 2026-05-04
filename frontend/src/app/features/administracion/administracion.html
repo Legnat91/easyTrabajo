@@ -121,6 +121,24 @@
   </div>
   }
 
+  <div class="mb-6 flex justify-between items-center bg-white p-4 rounded-lg shadow-sm border border-slate-200">
+    <div class="relative w-full md:w-1/2">
+      @if (pestanaActiva() === 'empleados') {
+      <input type="text"
+             (input)="actualizarBusquedaEmpleados($event)"
+             placeholder="Buscar por nombre, NIF, movil o ID..."
+             class="bg-slate-50 border border-slate-300 text-slate-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 outline-none transition-all">
+      }
+
+      @if (pestanaActiva() === 'usuarios') {
+      <input type="text"
+             (input)="actualizarBusquedaUsuarios($event)"
+             placeholder="Buscar por nombre, email, rol o empleado..."
+             class="bg-slate-50 border border-slate-300 text-slate-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 outline-none transition-all">
+      }
+    </div>
+  </div>
+
   <div class="bg-white rounded-lg shadow-md overflow-hidden border border-slate-200">
     <div class="overflow-x-auto">
 
@@ -136,7 +154,7 @@
           </tr>
         </thead>
         <tbody>
-          @for (empleado of adminService.empleados(); track empleado.id_empleado) {
+          @for (empleado of empleadosFiltrados; track empleado.id_empleado) {
           <tr class="bg-white border-b hover:bg-slate-50">
             <td class="px-6 py-4 font-medium text-slate-900">#{{ empleado.id_empleado }}</td>
             <td class="px-6 py-4 font-bold text-slate-800">{{ empleado.nombre }} {{ empleado.apellido }} {{
@@ -170,7 +188,7 @@
           </tr>
         </thead>
         <tbody>
-          @for (usuario of adminService.usuarios(); track usuario.id_usuario) {
+          @for (usuario of usuariosFiltrados; track usuario.id_usuario) {
           <tr class="bg-white border-b hover:bg-slate-50">
             <td class="px-6 py-4">
               <span class="block font-bold text-slate-800">{{ usuario.nombre }}</span>

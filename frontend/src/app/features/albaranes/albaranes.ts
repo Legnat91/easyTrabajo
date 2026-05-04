@@ -28,6 +28,7 @@ export default class Albaranes implements OnInit {
   public mostrarFormulario = signal(false);
   public avisoSeleccionado = signal<number | null>(null);
   public esSoloLectura = signal(false);
+  public textoBusqueda = signal<string>('');
 
   // ESTADOS DEL MODAL DE CIERRE
   public mostrarModalCierre = signal(false);
@@ -45,6 +46,29 @@ export default class Albaranes implements OnInit {
     observaciones: [''],
     id_empleado: [null as number | null]
   });
+
+  actualizarBusqueda(event: Event) {
+    const input = event.target as HTMLInputElement;
+    this.textoBusqueda.set(input.value);
+  }
+
+  get albaranesFiltrados() {
+    const busqueda = this.textoBusqueda().toLowerCase().trim();
+    const albaranes = this.partesService.partes();
+
+    if (!busqueda) return albaranes;
+
+    return albaranes.filter(albaran =>
+      albaran.descripcion?.toLowerCase().includes(busqueda) ||
+      albaran.estado?.toLowerCase().includes(busqueda) ||
+      albaran.cliente_nombre?.toLowerCase().includes(busqueda) ||
+      albaran.tecnico_nombre?.toLowerCase().includes(busqueda) ||
+      albaran.material?.toLowerCase().includes(busqueda) ||
+      albaran.observaciones?.toLowerCase().includes(busqueda) ||
+      albaran.id_parte_trabajo?.toString().includes(busqueda) ||
+      albaran.id_tarea?.toString().includes(busqueda)
+    );
+  }
 
   ngOnInit() {
 
@@ -105,19 +129,6 @@ export default class Albaranes implements OnInit {
       observaciones: albaran.observaciones,
       id_empleado: albaran.id_empleado
     });
-
-
-    this.albaranForm.patchValue({
-      id_parte_trabajo: albaran.id_parte_trabajo,
-      id_tarea: albaran.id_tarea,
-      id_cliente: albaran.id_cliente,
-      descripcion: albaran.descripcion,
-      horas: albaran.horas,
-      material: albaran.material,
-      observaciones: albaran.observaciones,
-      id_empleado: albaran.id_empleado
-    });
-
 
     if (albaran.estado === 'Cerrado') {
       this.esSoloLectura.set(true);

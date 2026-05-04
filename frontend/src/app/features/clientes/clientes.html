@@ -77,7 +77,16 @@
     </form>
   </div>
   }
-
+  <div class="mb-6 flex justify-between items-center bg-white p-4 rounded-lg shadow-sm border border-slate-200">
+    <div class="relative w-full md:w-1/2">
+      <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-400">
+      </div>
+      <input type="text"
+             (input)="actualizarBusqueda($event)"
+             placeholder="Buscar por nombre, NIF o población..."
+             class="bg-slate-50 border border-slate-300 text-slate-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5 outline-none transition-all">
+    </div>
+  </div>
   <div class="bg-white rounded-lg shadow-md overflow-hidden border border-slate-200">
     <div class="overflow-x-auto">
       <table class="w-full text-sm text-left text-slate-500">
@@ -91,7 +100,7 @@
           </tr>
         </thead>
         <tbody>
-          @for (cliente of clientesService.clientes(); track cliente.id_cliente) {
+          @for (cliente of clientesFiltrados(); track cliente.id_cliente) {
           <tr class="bg-white border-b hover:bg-slate-50 transition-colors">
             <td class="px-6 py-4 font-medium text-slate-900 whitespace-nowrap">
               <span class="block text-xs text-slate-400">#{{ cliente.id_cliente }}</span>
