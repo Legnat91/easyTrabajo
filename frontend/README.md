@@ -1,5 +1,8 @@
 # Frontend de EasyParte
 
+![Angular](https://img.shields.io/badge/Angular-21+-DD0031?style=for-the-badge&logo=angular&logoColor=white)
+![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
+
 Este frontend es la parte visual de EasyParte. Está desarrollado con Angular y se comunica con el backend PHP mediante peticiones HTTP.
 
 La aplicación permite iniciar sesión, consultar el dashboard, gestionar clientes, avisos, partes de trabajo, empleados y usuarios.

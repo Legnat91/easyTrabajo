@@ -1,5 +1,10 @@
 # EasyTrabajo / EasyParte
 
+![Angular](https://img.shields.io/badge/Angular-21+-DD0031?style=for-the-badge&logo=angular&logoColor=white)
+![PHP](https://img.shields.io/badge/PHP-Vanilla_OOP-777BB4?style=for-the-badge&logo=php&logoColor=white)
+![MariaDB](https://img.shields.io/badge/MariaDB-003545?style=for-the-badge&logo=mariadb&logoColor=white)
+![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
+
 EasyParte es una aplicación web creada como proyecto final de ciclo de DAW. La idea es centralizar parte del trabajo diario de una pequeña empresa de servicios: clientes, avisos, empleados, usuarios, roles y partes de trabajo.
 
 No está planteada como una aplicación lista para producción, sino como un proyecto académico funcional donde se conectan un frontend Angular, una API PHP y una base de datos MariaDB/MySQL.

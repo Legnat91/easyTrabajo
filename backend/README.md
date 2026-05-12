@@ -1,5 +1,8 @@
 # Backend de EasyParte
 
+![PHP](https://img.shields.io/badge/PHP-Vanilla_OOP-777BB4?style=for-the-badge&logo=php&logoColor=white)
+![MariaDB](https://img.shields.io/badge/MariaDB-003545?style=for-the-badge&logo=mariadb&logoColor=white)
+
 Este backend es la API REST de EasyParte. Está desarrollado en PHP vanilla orientado a objetos y se encarga de conectar el frontend Angular con la base de datos MariaDB/MySQL.
 
 Su objetivo es gestionar autenticación, usuarios, roles, clientes, avisos, empleados y partes de trabajo.
