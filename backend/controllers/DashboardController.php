@@ -67,8 +67,9 @@ class DashboardController
                 "esVistaPersonal" => $esTecnico // Enviamos esta bandera al frontend
             ]);
         } catch (Exception $e) {
+            error_log("Error al cargar dashboard: " . $e->getMessage());
             http_response_code(500);
-            echo json_encode(["error" => $e->getMessage()]);
+            echo json_encode(["error" => "No se ha podido cargar el resumen del dashboard."]);
         }
     }
 }

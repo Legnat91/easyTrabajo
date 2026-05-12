@@ -76,9 +76,12 @@ export default class Albaranes implements OnInit {
     this.clientesService.cargarClientes();
 
     // Escuchar si venimos desde el Tablón de Avisos con un ID en la URL
-    this.route.queryParams.subscribe(params => {
+    this.route.queryParams.subscribe(async params => {
       if (params['aviso_id']) {
         const idAviso = Number(params['aviso_id']);
+        if (this.tareasService.tareas().length === 0) {
+          await this.tareasService.cargarTareasAsync();
+        }
         this.precargarDatosAviso(idAviso);
       }
     });

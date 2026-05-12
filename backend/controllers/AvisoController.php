@@ -87,8 +87,9 @@ class AvisoController
                 echo json_encode(["mensaje" => "Aviso creado con éxito", "id" => $this->conn->lastInsertId()]);
             }
         } catch (PDOException $e) {
+            error_log("Error al guardar aviso: " . $e->getMessage());
             http_response_code(400);
-            echo json_encode(["error" => "Error al guardar el aviso: " . $e->getMessage()]);
+            echo json_encode(["error" => "No se ha podido guardar el aviso."]);
         }
     }
 
@@ -152,8 +153,9 @@ class AvisoController
                 echo json_encode(["mensaje" => "Aviso actualizado"]);
             }
         } catch (PDOException $e) {
+            error_log("Error al actualizar aviso: " . $e->getMessage());
             http_response_code(400);
-            echo json_encode(["error" => "Error SQL al actualizar: " . $e->getMessage()]);
+            echo json_encode(["error" => "No se ha podido actualizar el aviso."]);
         }
     }
 

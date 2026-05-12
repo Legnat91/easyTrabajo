@@ -114,8 +114,9 @@ class ParteTrabajoController
 
         } catch (Exception $e) {
             $this->conn->rollBack();
+            error_log("Error al actualizar parte de trabajo: " . $e->getMessage());
             http_response_code(500);
-            echo json_encode(["error" => "Error al actualizar: " . $e->getMessage()]);
+            echo json_encode(["error" => "No se ha podido actualizar el parte de trabajo."]);
         }
     }
 }

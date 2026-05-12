@@ -30,7 +30,7 @@ class EmpleadoController
     }
 
     // CREAR UN EMPLEADO
-    public function create($data)
+    public function create($data, $usuarioLogueado)
     {
         if (empty($data->nombre) || empty($data->apellido)) {
             http_response_code(400);
@@ -48,9 +48,9 @@ class EmpleadoController
         $extension_tel = property_exists($data, 'extension_tel') ? $data->extension_tel : null;
         $prefijo = !empty($data->prefijo) ? $data->prefijo : '+34';
         $movil = property_exists($data, 'movil') ? $data->movil : null;
-        $nif = property_exists($data, 'nif') ? $data->nif : null;
+        $nif = !empty($data->nif) ? $data->nif : null;
         $id_departamento = !empty($data->id_departamento) ? $data->id_departamento : null;
-        $id_empresa = !empty($data->id_empresa) ? $data->id_empresa : 1;
+        $id_empresa = $usuarioLogueado->id_empresa;
 
         $stmt->bindParam(":nombre", $data->nombre);
         $stmt->bindParam(":apellido", $data->apellido);
@@ -66,9 +66,10 @@ class EmpleadoController
             if ($stmt->execute()) {
                 $id_insertado = $this->conn->lastInsertId();
 
-                $query_get = "SELECT * FROM " . $this->tabla . " WHERE id_empleado = :id";
+                $query_get = "SELECT * FROM " . $this->tabla . " WHERE id_empleado = :id AND id_empresa = :id_empresa";
                 $stmt_get = $this->conn->prepare($query_get);
                 $stmt_get->bindParam(":id", $id_insertado);
+                $stmt_get->bindParam(":id_empresa", $id_empresa);
                 $stmt_get->execute();
 
                 http_response_code(201);
@@ -78,8 +79,9 @@ class EmpleadoController
                 ]);
             }
         } catch (PDOException $e) {
+            error_log("Error al guardar empleado: " . $e->getMessage());
             http_response_code(400);
-            echo json_encode(["error" => "Error al guardar el empleado. Detalle: " . $e->getMessage()]);
+            echo json_encode(["error" => "No se ha podido guardar el empleado."]);
         }
     }
     // ACTUALIZAR EMPLEADO
@@ -95,7 +97,7 @@ class EmpleadoController
                 'nombre' => $datos->nombre,
                 'apellido' => $datos->apellido,
                 'apellido_2' => $datos->apellido_2 ?? null,
-                'nif' => $datos->nif ?? null,
+                'nif' => !empty($datos->nif) ? $datos->nif : null,
                 'movil' => $datos->movil ?? null,
                 'id' => $id,
                 'id_empresa' => $usuarioLogueado->id_empresa
@@ -104,8 +106,9 @@ class EmpleadoController
             http_response_code(200);
             echo json_encode(["mensaje" => "Empleado actualizado correctamente"]);
         } catch (Exception $e) {
+            error_log("Error al actualizar empleado: " . $e->getMessage());
             http_response_code(500);
-            echo json_encode(["error" => "Error al actualizar empleado: " . $e->getMessage()]);
+            echo json_encode(["error" => "No se ha podido actualizar el empleado."]);
         }
     }
     // BORRAR EMPLEADO 
@@ -123,8 +126,9 @@ class EmpleadoController
             http_response_code(200);
             echo json_encode(["mensaje" => "Empleado dado de baja correctamente"]);
         } catch (Exception $e) {
+            error_log("Error al dar de baja empleado: " . $e->getMessage());
             http_response_code(500);
-            echo json_encode(["error" => "Error al dar de baja al empleado: " . $e->getMessage()]);
+            echo json_encode(["error" => "No se ha podido dar de baja al empleado."]);
         }
     }
 }

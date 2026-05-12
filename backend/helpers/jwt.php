@@ -1,7 +1,9 @@
 <?php
 
 class JWT {
-    private static $secret = 'EasyParte_S3cr3t_K3y_2026!*';
+    private static function getSecret() {
+        return getenv('JWT_SECRET') ?: 'clave_local_para_desarrollo_easyparte_2026';
+    }
 
     public static function encode($payload) {
         $header = json_encode(['typ' => 'JWT', 'alg' => 'HS256']);
@@ -9,7 +11,7 @@ class JWT {
         $base64UrlHeader = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($header));
         $base64UrlPayload = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode(json_encode($payload)));
         
-        $signature = hash_hmac('sha256', $base64UrlHeader . "." . $base64UrlPayload, self::$secret, true);
+        $signature = hash_hmac('sha256', $base64UrlHeader . "." . $base64UrlPayload, self::getSecret(), true);
         $base64UrlSignature = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($signature));
         
         return $base64UrlHeader . "." . $base64UrlPayload . "." . $base64UrlSignature;
@@ -23,7 +25,7 @@ class JWT {
 
         list($base64UrlHeader, $base64UrlPayload, $base64UrlSignature) = $parts;
 
-        $signature = hash_hmac('sha256', $base64UrlHeader . "." . $base64UrlPayload, self::$secret, true);
+        $signature = hash_hmac('sha256', $base64UrlHeader . "." . $base64UrlPayload, self::getSecret(), true);
         $expectedSignature = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($signature));
 
         if (hash_equals($expectedSignature, $base64UrlSignature)) {

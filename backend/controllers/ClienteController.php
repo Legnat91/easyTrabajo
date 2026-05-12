@@ -26,7 +26,21 @@ class ClienteController
             Response::error("Nombre y NIF son obligatorios.", 400);
         }
 
-        $cliente = $this->clienteModel->create($data, $usuarioLogueado->id_empresa);
+        try {
+            $cliente = $this->clienteModel->create($data, $usuarioLogueado->id_empresa);
+        } catch (PDOException $e) {
+            error_log("Error al crear cliente: " . $e->getMessage());
+
+            if ($e->getCode() === '23000') {
+                http_response_code(400);
+                echo json_encode(["error" => "Ya existe un cliente con ese NIF."]);
+                return;
+            }
+
+            http_response_code(500);
+            echo json_encode(["error" => "No se ha podido crear el cliente."]);
+            return;
+        }
 
         if ($cliente) {
             http_response_code(201);
@@ -42,7 +56,21 @@ class ClienteController
 
     public function update($id, $data, $usuarioLogueado)
     {
-        $ok = $this->clienteModel->update($id, $data, $usuarioLogueado->id_empresa);
+        try {
+            $ok = $this->clienteModel->update($id, $data, $usuarioLogueado->id_empresa);
+        } catch (PDOException $e) {
+            error_log("Error al actualizar cliente: " . $e->getMessage());
+
+            if ($e->getCode() === '23000') {
+                http_response_code(400);
+                echo json_encode(["error" => "Ya existe un cliente con ese NIF."]);
+                return;
+            }
+
+            http_response_code(500);
+            echo json_encode(["error" => "No se ha podido actualizar el cliente."]);
+            return;
+        }
 
         if ($ok) {
             http_response_code(200);

@@ -29,8 +29,16 @@ class UsuarioController {
             echo json_encode(["mensaje" => "Usuario creado correctamente."]);
         } catch (Exception $e) {
             $this->conn->rollBack();
+            error_log("Error al crear usuario: " . $e->getMessage());
+
+            if ($e instanceof PDOException && $e->getCode() === '23000' && strpos($e->getMessage(), 'email') !== false) {
+                http_response_code(400);
+                echo json_encode(["error" => "Ya existe un usuario con ese email."]);
+                return;
+            }
+
             http_response_code(500);
-            echo json_encode(["error" => "Error en la creación: " . $e->getMessage()]);
+            echo json_encode(["error" => "No se ha podido crear el usuario."]);
         }
     }
 
@@ -100,8 +108,16 @@ class UsuarioController {
         } catch (Exception $e) {
       
             $this->conn->rollBack();
+            error_log("Error al actualizar usuario: " . $e->getMessage());
+
+            if ($e instanceof PDOException && $e->getCode() === '23000' && strpos($e->getMessage(), 'email') !== false) {
+                http_response_code(400);
+                echo json_encode(["error" => "Ya existe un usuario con ese email."]);
+                return;
+            }
+
             http_response_code(500);
-            echo json_encode(["error" => "Error al actualizar usuario: " . $e->getMessage()]);
+            echo json_encode(["error" => "No se ha podido actualizar el usuario."]);
         }
     }
 
@@ -119,8 +135,9 @@ class UsuarioController {
             http_response_code(200);
             echo json_encode(["mensaje" => "Usuario eliminado correctamente"]);
         } catch (Exception $e) {
+            error_log("Error al eliminar usuario: " . $e->getMessage());
             http_response_code(500);
-            echo json_encode(["error" => "Error al eliminar usuario: " . $e->getMessage()]);
+            echo json_encode(["error" => "No se ha podido eliminar el usuario."]);
         }
     }
 }

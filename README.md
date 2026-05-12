@@ -1,144 +1,308 @@
-# EasyParte
+# EasyTrabajo / EasyParte
 
-![Angular](https://img.shields.io/badge/Angular-21+-DD0031?style=for-the-badge&logo=angular&logoColor=white)
-![PHP](https://img.shields.io/badge/PHP-Vanilla_OOP-777BB4?style=for-the-badge&logo=php&logoColor=white)
-![MariaDB](https://img.shields.io/badge/MariaDB-003545?style=for-the-badge&logo=mariadb&logoColor=white)
-![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
+EasyParte es una aplicación web creada como proyecto final de ciclo de DAW. La idea es centralizar parte del trabajo diario de una pequeña empresa de servicios: clientes, avisos, empleados, usuarios, roles y partes de trabajo.
 
-**EasyParte** es una aplicación web desarrollada como proyecto de TFC (DAW) orientada a la gestión de información interna en una empresa de servicios. 
+No está planteada como una aplicación lista para producción, sino como un proyecto académico funcional donde se conectan un frontend Angular, una API PHP y una base de datos MariaDB/MySQL.
 
-El objetivo es centralizar la gestión de usuarios, clientes y avisos, aplicando una arquitectura cliente-servidor con autenticación y control de acceso.
+## Problema que resuelve
 
-## Stack Tecnológico
+En muchas empresas pequeñas, los avisos de clientes, los técnicos asignados y los partes de trabajo acaban repartidos entre llamadas, mensajes o documentos sueltos. Este proyecto intenta ordenar ese flujo en una única herramienta interna:
 
-### Frontend
-* **Framework**: Angular 21+ (Standalone Components).
-* **Estilos**: Tailwind CSS (Diseño Mobile-First, UI limpia y moderna).
-* **Formularios**: Reactive Forms con validaciones asíncronas.
-* **Seguridad**: Guards de enrutamiento (`authGuard`) e interceptor para autenticación.
+- Registrar clientes.
+- Crear avisos o tareas de trabajo.
+- Asignar avisos a empleados.
+- Crear partes de trabajo o albaranes.
+- Gestionar usuarios y roles.
+- Consultar un resumen general desde el dashboard.
 
-### Backend
-* **Lenguaje**: PHP puro (Vanilla) orientado a objetos.
-* **Arquitectura**: API RESTful con patrón Front Controller (`index.php`) y enrutador dinámico.
-* **Base de Datos**: MariaDB / MySQL.
-* **Seguridad**: PDO para acceso a datos y JWT para autenticación.
+## Para quién está pensada
 
-## Características Principales
+La aplicación está pensada para una empresa de servicios con personal administrativo y técnicos. El administrador gestiona usuarios, empleados y datos generales. Los técnicos pueden consultar avisos asignados o sin asignar y trabajar con partes.
 
-- **Sistema de Autenticación**: Login real conectado a la base de datos.
-- **Gestión de Clientes**:
-  - Listado dinámico con actualizaciones en tiempo real (Signals).
-  - Alta y modificaciones.
-  - **Baja Logica**: Los clientes no se borran de la base de datos para mantener la integridad referencial de facturas y albaranes.
+## Estado actual
 
-- **Gestiónn de avisos**: 
-  - Listado dinámico con actualizaciones en tiempo real (Signals).
-  - Alta de avisos y modificaciones.
-  - Avisos con prioridad y asignación del personal.
-  - Cancelación de avisos con posibilidad de reactivar.
+El proyecto es funcional en local con XAMPP y Angular. Los módulos principales existen y se comunican con la API real. Aun así, hay partes que se consideran mejorables o pendientes, especialmente validaciones, permisos más finos, configuración mediante entorno y pruebas automatizadas.
 
-- **Gestión de albaranes**:
-  - En construcción actualmente solo simula un CRUD
+Valoración honesta del estado: proyecto correcto para TFC, con base completa y defendible, pero no preparado para despliegue real sin revisar seguridad, configuración y manejo de errores.
 
-- **Gestion de Usuarios/empleados**:
-  - Alta de empleados
-  - Alta de usuario con asignación de empleado y roles.
-  - Falta hacer inactivo de empleado y usuario.
-  - Modificación de usuario/empleado. 
+## Funcionalidades implementadas
 
-## Arquitectura 
+- Login con usuario y contraseña.
+- Generación y validación de token JWT.
+- Dashboard con datos resumen.
+- Gestión de clientes: listado, alta, edición y baja lógica.
+- Gestión de avisos: listado, alta, edición, cancelación y asignación.
+- Gestión de partes de trabajo/albaranes: listado, alta, edición y cierre.
+- Gestión de empleados.
+- Gestión de usuarios.
+- Gestión de roles desde base de datos.
+- Control básico de rutas privadas en Angular.
+- Control de acceso de administración en frontend y backend.
+- Filtrado por empresa en varias consultas del backend.
 
-* **frontend (Angular)** consume una API REST
-* **backend (PHP)** gestiona la lógica de negocio y el acceso a datos
-* **JWT** para la autenticación.
-* **MariaDB** para la base de datos 
+## Tecnologías usadas
 
-### Flujo de autenticación
+Frontend:
 
-1. El usuario inicia sesión
-2. El backend valida credenciales
-3. Se genera un token JWT
-4. El frontend almacena el token
-5. En cada petición, el token se envía en la cabecera `Authorization`
-6. El backend valida el token mediante middleware
+- Angular moderno con standalone components.
+- TypeScript.
+- Reactive Forms.
+- Angular Router.
+- Signals.
+- Tailwind CSS.
+- Chart.js para gráficos del dashboard.
 
-## Estructura del proyecto
+Backend:
 
-El proyecto se divide en dos partes principales:
-* `/frontend`: Aplicación cliente en Angular.
-* `/backend`: API REST en PHP que sirve los datos.
-* `/base de datos`: MariaDB / MySQL
+- PHP vanilla orientado a objetos.
+- API REST sencilla.
+- PDO para acceso a base de datos.
+- Middleware propio de autenticación.
+- JWT propio con firma HMAC SHA-256.
 
-## Seguridad
+Base de datos:
 
-Se han aplicado medidas básicas de seguridad:
+- MariaDB / MySQL.
+- Script SQL exportado desde phpMyAdmin.
+- Relaciones mediante claves foráneas.
 
-- Contraseñas hasheadas (`password_hash`)
-- Tokens JWT con expiración
-- Validación de acceso mediante middleware
-- Protección de rutas en frontend
+## Arquitectura general
 
-## Instalación y Despliegue Local
+El proyecto está dividido en tres partes:
 
-Para ejecutar este proyecto en tu máquina local, necesitas tener instalado **Node.js**, **Angular CLI** y un servidor local como **XAMPP**.
+- `frontend/`: aplicación Angular que muestra la interfaz y consume la API.
+- `backend/`: API PHP que valida sesiones, aplica parte de la lógica y accede a la base de datos.
+- `bbdd/`: script SQL para crear e importar la base de datos.
 
-### 1. Preparar el Backend (XAMPP)
-1. Clona este repositorio dentro de la carpeta `htdocs` de XAMPP. La ruta debería quedar así: `C:/xampp/htdocs/easyTrabajo`.
-2. Inicia los servicios de **Apache** y **MySQL** en el panel de control de XAMPP.
-3. Crear la base de datos:
-- Abre phpMyAdmin (`http://localhost/phpmyadmin`) y crea una base de datos vacía.
-- Importar el archivo `easyParte.sql` esto creará automáticamente, actualmente está sobredimensionado para futuras actualizaciones:
-  - Estructura de la base de datos
-  - Roles del sistema
-  - Empresa de prueba
-  - Usuario administrador inicial
-  - Esto nos creara una base de datos ejemplo, con un usuario `profesor@easyparte.es`con una contraseña `1234`.
+Flujo básico:
 
-### 2. Preparar el Frontend (Angular)
-1. Abre una terminal en la carpeta `/frontend` del proyecto.
-2. Instala las dependencias:
+1. El usuario inicia sesión desde Angular.
+2. Angular envía email y contraseña al backend.
+3. PHP valida las credenciales contra MariaDB.
+4. Si son correctas, devuelve un token JWT y los datos del usuario.
+5. Angular guarda la sesión en `sessionStorage`.
+6. Las peticiones privadas incluyen el token en la cabecera `Authorization`.
+7. El backend valida el token antes de acceder a los recursos protegidos.
+
+## Estructura de carpetas
+
+```text
+easyTrabajo/
+├── backend/
+│   ├── config/
+│   ├── controllers/
+│   ├── helpers/
+│   ├── middleware/
+│   ├── models/
+│   ├── public/
+│   └── routes/
+├── bbdd/
+│   └── easyparte.sql
+├── frontend/
+│   ├── public/
+│   ├── src/
+│   ├── angular.json
+│   ├── package.json
+│   └── package-lock.json
+├── README.md
+├── backend/README.md
+└── frontend/README.md
+```
+
+## Requisitos previos
+
+- XAMPP, Laragon o entorno similar con Apache, PHP y MySQL/MariaDB.
+- PHP 8.x.
+- Node.js y npm.
+- Angular CLI, o usar los scripts de `npm`.
+- Navegador web moderno.
+
+## Instalación desde cero
+
+1. Copiar o clonar el proyecto dentro de `htdocs`:
+
+```bash
+C:/xampp/htdocs/easyTrabajo
+```
+
+2. Arrancar Apache y MySQL desde XAMPP.
+
+3. Crear la base de datos en phpMyAdmin.
+
+4. Importar el script:
+
+```text
+bbdd/easyparte.sql
+```
+
+5. Revisar la configuración de conexión en:
+
+```text
+backend/config/database.php
+```
+
+Por defecto está preparada para un entorno local con:
+
+- host: `localhost`
+- base de datos: `easyParte`
+- usuario: `root`
+- contraseña vacía
+- puerto: `3306`
+
+## Cómo ejecutar el backend
+
+Con XAMPP, el backend queda disponible desde Apache si el proyecto está en `htdocs`:
+
+```text
+http://localhost/easyTrabajo/backend/public/api
+```
+
+Ejemplos de endpoints:
+
+```text
+POST   /api/login
+GET    /api/dashboard
+GET    /api/clientes
+POST   /api/clientes
+GET    /api/avisos
+POST   /api/avisos
+GET    /api/partes
+POST   /api/partes
+GET    /api/empleados
+GET    /api/usuarios
+GET    /api/roles
+```
+
+## Cómo ejecutar el frontend
+
+Entrar en la carpeta del frontend:
+
+```bash
+cd frontend
+```
+
+Instalar dependencias:
+
 ```bash
 npm install
 ```
-3. Levanta el servidor de desarrollo de Angular:
+
+Arrancar Angular:
+
 ```bash
-  ng serve
+npm start
 ```
-4. Abre tu navegador y navega a 
-```bash
-http://localhost:4200.
+
+Abrir:
+
+```text
+http://localhost:4200
 ```
-### ¡¡IMPORTANTE!! 
-Si al intentar iniciar sesión no podéis acceder, es posible que el problema esté relacionado con el puerto de MySQL en XAMPP. Por defecto, suele ser el 3306.
 
-Si necesitáis cambiarlo, dirigíos al archivo:
-`easyTrabajo/backend/config/database.php`
-y modificad el valor de `port=3306` por el puerto que estéis utilizando en vuestro entorno.
+## Cómo configurar la base de datos
 
-## Estado del Proyecto (Roadmap)
+El archivo principal es:
 
-  [x] Arquitectura base y Front Controller (PHP).
+```text
+bbdd/easyparte.sql
+```
 
-  [x] UI/UX y Layouts principales (Angular + Tailwind).
+Este script crea las tablas principales y carga datos iniciales de prueba. Incluye roles, una empresa demo, clientes, empleados, usuarios, tareas y partes.
 
-  [x] Módulo de Autenticación.
+Tablas principales:
 
-  [x] Módulo de Clientes (CRUD completo).
+- `empresa`
+- `cliente`
+- `empleado`
+- `departamento`
+- `usuario`
+- `rol`
+- `usuario_rol`
+- `tarea`
+- `parte_trabajo`
 
-  [x] Módulo de Avisos (CRUD completo).
+## Cómo probar el login
 
-  [ ] Módulo de empleado/usuario(falta modificación y baja).
+El SQL incluye usuarios de prueba. En el README antiguo del proyecto se indicaba el usuario:
 
-  [x] Módulo de Albaranes.
+```text
+profesor@easyparte.es
+```
 
-  [x] Usar modales para mensajes de confirmación.
+con contraseña:
 
-  [ ] Mejorar seguridad.
+```text
+1234
+```
 
-  [ ] Arreglar errores.
+Si el login falla, conviene comprobar:
 
-  [ ] Refactorización del codigo.
+- Que Apache y MySQL están arrancados.
+- Que la base de datos se llama igual que en `database.php`.
+- Que el puerto de MySQL coincide con el configurado.
+- Que el usuario existe y está activo en la tabla `usuario`.
+- Que el token anterior no se ha quedado guardado en `sessionStorage`.
 
-  ## Autor
+## Roles existentes
 
-  Desarrollado por Ángel de la Calle Fernández para TFC de ciclo de DAW
+Los roles incluidos en la base de datos son:
+
+- `Administrador`
+- `Técnico`
+- `Atención al Cliente`
+
+El administrador puede acceder a la pantalla de administración para empleados, usuarios y roles. El técnico tiene una vista más limitada de avisos. Aun así, el control de permisos es básico y se podría ampliar por acción concreta.
+
+## Módulos actuales
+
+- Login.
+- Dashboard.
+- Clientes.
+- Avisos.
+- Partes de trabajo / albaranes.
+- Administración de empleados.
+- Administración de usuarios.
+- Roles.
+
+## Seguridad implementada
+
+- Contraseñas almacenadas con `password_hash`.
+- Validación de login con `password_verify`.
+- Token JWT con expiración.
+- Middleware de autenticación en rutas privadas.
+- Interceptor Angular para enviar el token.
+- Guard de autenticación en frontend.
+- Guard de rol para administración.
+- Protección backend para recursos de administración.
+- Consultas preparadas con PDO.
+- Mensajes de error genéricos en errores internos principales.
+
+## Limitaciones actuales
+
+- La configuración de base de datos sigue escrita en `database.php`.
+- El JWT usa `JWT_SECRET` si existe, pero mantiene clave local por defecto para XAMPP.
+- No hay sistema completo de variables de entorno.
+- No hay tests automatizados.
+- El control de permisos por rol es básico.
+- Algunas validaciones dependen aún de la base de datos.
+- CORS está abierto para facilitar desarrollo local.
+- La aplicación guarda sesión en `sessionStorage`.
+- El proyecto incluye datos demo en el SQL.
+
+## Mejoras futuras
+
+- Crear un archivo `.env` o configuración externa real.
+- Mejorar el manejo global de errores.
+- Añadir pruebas de backend y frontend.
+- Centralizar la URL de la API en environments de Angular.
+- Mejorar el control de roles en backend por acción.
+- Añadir paginación y filtros desde servidor.
+- Mejorar auditoría en base de datos con `created_at`, `updated_at`, `deleted_at`.
+- Revisar diseño responsive completo.
+- Preparar una guía de despliegue si se quisiera publicar.
+
+## Autor y contexto académico
+
+Proyecto desarrollado por Ángel de la Calle Fernández como Trabajo Final de Ciclo de Desarrollo de Aplicaciones Web.
+
+Este repositorio debe entenderse como un proyecto TFC/DAW: su objetivo principal es demostrar integración entre frontend, backend, base de datos, autenticación y gestión de entidades reales en una aplicación web interna.

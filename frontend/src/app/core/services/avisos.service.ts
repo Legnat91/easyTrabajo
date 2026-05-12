@@ -20,6 +20,15 @@ export class TareasService {
     });
   }
 
+  async cargarTareasAsync(): Promise<void> {
+    try {
+      const datosReales = await firstValueFrom(this.http.get<Tarea[]>(`${this.apiUrl}/avisos`));
+      this.tareas.set(datosReales);
+    } catch (error) {
+      console.error("Error de cargar las tareas", error);
+    }
+  }
+
   //CREAR AVISO
   async agregarTarea(nuevaTarea: any): Promise<boolean> {
     try {
