@@ -20,11 +20,21 @@ class ParteTrabajoController
                   FROM " . $this->tabla . " p
                   LEFT JOIN cliente c ON p.id_cliente = c.id_cliente
                   LEFT JOIN empleado e ON p.id_empleado = e.id_empleado
-                  WHERE p.id_empresa = :id_empresa AND p.activo = 1
-                  ORDER BY p.fecha_inicio DESC";
+                  WHERE p.id_empresa = :id_empresa AND p.activo = 1";
+
+        if ($usuarioLogueado->rol_nombre === 'Técnico') {
+            $query .= " AND p.id_empleado = :id_empleado";
+        }
+
+        $query .= " ORDER BY p.fecha_inicio DESC";
 
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(":id_empresa", $usuarioLogueado->id_empresa);
+
+        if ($usuarioLogueado->rol_nombre === 'Técnico') {
+            $stmt->bindParam(":id_empleado", $usuarioLogueado->id_empleado);
+        }
+
         $stmt->execute();
 
         http_response_code(200);
@@ -48,7 +58,19 @@ class ParteTrabajoController
         $stmt = $this->conn->prepare($query);
 
         $id_tarea = !empty($data->id_tarea) ? $data->id_tarea : null;
-        $id_empleado = !empty($data->id_empleado) ? $data->id_empleado : $usuarioLogueado->id_empleado;
+
+        if ($usuarioLogueado->rol_nombre === 'Técnico') {
+            if (empty($usuarioLogueado->id_empleado)) {
+                http_response_code(403);
+                echo json_encode(["error" => "No tienes permisos para crear este parte."]);
+                return;
+            }
+
+            $id_empleado = $usuarioLogueado->id_empleado;
+        } else {
+            $id_empleado = !empty($data->id_empleado) ? $data->id_empleado : $usuarioLogueado->id_empleado;
+        }
+
         $horas = !empty($data->horas) ? $data->horas : 0;
         $material = !empty($data->material) ? $data->material : null;
         $observaciones = !empty($data->observaciones) ? $data->observaciones : null;
@@ -75,35 +97,62 @@ class ParteTrabajoController
     public function update($id, $data, $usuarioLogueado)
     {
         try {
+            $query_check = "SELECT * FROM " . $this->tabla . "
+                            WHERE id_parte_trabajo = :id AND id_empresa = :id_empresa AND activo = 1";
+            $stmt_check = $this->conn->prepare($query_check);
+            $stmt_check->bindParam(":id", $id);
+            $stmt_check->bindParam(":id_empresa", $usuarioLogueado->id_empresa);
+            $stmt_check->execute();
+
+            if ($stmt_check->rowCount() == 0) {
+                http_response_code(404);
+                echo json_encode(["error" => "Parte de trabajo no encontrado."]);
+                return;
+            }
+
+            $parteActual = $stmt_check->fetch(PDO::FETCH_ASSOC);
+
+            if ($usuarioLogueado->rol_nombre === 'Técnico' && $parteActual['id_empleado'] != $usuarioLogueado->id_empleado) {
+                http_response_code(403);
+                echo json_encode(["error" => "No tienes permisos para actualizar este parte."]);
+                return;
+            }
+
             $this->conn->beginTransaction();
 
+            $descripcion = isset($data->descripcion) ? $data->descripcion : $parteActual['descripcion'];
+            $horas = isset($data->horas) ? $data->horas : $parteActual['horas'];
+            $material = property_exists($data, 'material') ? $data->material : $parteActual['material'];
+            $observaciones = property_exists($data, 'observaciones') ? $data->observaciones : $parteActual['observaciones'];
+            $estado = isset($data->estado) ? $data->estado : $parteActual['estado'];
+            $id_tarea = $parteActual['id_tarea'];
             
             $query = "UPDATE " . $this->tabla . " 
                       SET descripcion=:descripcion, horas=:horas, material=:material, 
                           observaciones=:observaciones, estado=:estado ";
             
             // Si cerramos el parte se pone fecha fin
-            if (isset($data->estado) && $data->estado === 'Cerrado') {
+            if ($estado === 'Cerrado') {
                 $query .= ", fecha_fin=NOW() ";
             }
             
-            $query .= " WHERE id_parte_trabajo = :id AND id_empresa = :id_empresa";
+            $query .= " WHERE id_parte_trabajo = :id AND id_empresa = :id_empresa AND activo = 1";
 
             $stmt = $this->conn->prepare($query);
-            $stmt->bindParam(":descripcion", $data->descripcion);
-            $stmt->bindParam(":horas", $data->horas);
-            $stmt->bindParam(":material", $data->material);
-            $stmt->bindParam(":observaciones", $data->observaciones);
-            $stmt->bindParam(":estado", $data->estado);
+            $stmt->bindParam(":descripcion", $descripcion);
+            $stmt->bindParam(":horas", $horas);
+            $stmt->bindParam(":material", $material);
+            $stmt->bindParam(":observaciones", $observaciones);
+            $stmt->bindParam(":estado", $estado);
             $stmt->bindParam(":id", $id);
             $stmt->bindParam(":id_empresa", $usuarioLogueado->id_empresa);
             $stmt->execute();
 
             // Si cerramos el parte y tiene un aviso asociado, damos por teminado el aviso
-            if (isset($data->estado) && $data->estado === 'Cerrado' && !empty($data->id_tarea)) {
+            if ($estado === 'Cerrado' && !empty($id_tarea)) {
                 $qTarea = "UPDATE tarea SET estado = 'Finalizada', fecha_fin = NOW() WHERE id_tarea = :id_tarea AND id_empresa = :id_empresa";
                 $stTarea = $this->conn->prepare($qTarea);
-                $stTarea->bindParam(":id_tarea", $data->id_tarea);
+                $stTarea->bindParam(":id_tarea", $id_tarea);
                 $stTarea->bindParam(":id_empresa", $usuarioLogueado->id_empresa);
                 $stTarea->execute();
             }
