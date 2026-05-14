@@ -28,7 +28,7 @@ La aplicación está pensada para una empresa de servicios con personal administ
 
 El proyecto es funcional en local con XAMPP y Angular. Los módulos principales existen y se comunican con la API real. Aun así, hay partes que se consideran mejorables o pendientes, especialmente validaciones, permisos más finos, configuración mediante entorno y pruebas automatizadas.
 
-Valoración honesta del estado: proyecto correcto para TFC, con base completa y defendible, pero no preparado para despliegue real sin revisar seguridad, configuración y manejo de errores.
+El proyecto no esta preparado para despliegue real sin revisar seguridad, configuración y manejo de errores.
 
 ## Funcionalidades implementadas
 
